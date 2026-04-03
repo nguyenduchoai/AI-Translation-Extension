@@ -2,7 +2,8 @@
 
 (function () {
   if (window.__aiTranslatorInjected) {
-    console.log('[AI Translator] Re-injection, refreshing listeners');
+    console.log('[AI Translator] Re-injection, skipping');
+    return;
   }
   window.__aiTranslatorInjected = true;
 
@@ -117,8 +118,12 @@
 
     if (w < 20 || h < 20) { cleanup(); return; }
 
-    if (overlay) overlay.style.setProperty('display', 'none', 'important');
-    if (selectionBox) selectionBox.style.setProperty('display', 'none', 'important');
+    if (overlay) { overlay.remove(); overlay = null; }
+    if (selectionBox) { selectionBox.remove(); selectionBox = null; }
+    
+    // Forcefully remove any leftovers from previous buggy multi-injections
+    document.querySelectorAll('#ai-translator-overlay, #ai-translator-selection').forEach(el => el.remove());
+    
     document.body.style.cursor = '';
 
     setTimeout(() => {
@@ -510,6 +515,10 @@
 
     if (overlay) { overlay.remove(); overlay = null; }
     if (selectionBox) { selectionBox.remove(); selectionBox = null; }
+    
+    // Force clean in case of orphaned elements
+    document.querySelectorAll('#ai-translator-overlay, #ai-translator-selection').forEach(el => el.remove());
+    
     if (!keepResult && resultPanel) { closePanel(); }
 
     removeLoader();
