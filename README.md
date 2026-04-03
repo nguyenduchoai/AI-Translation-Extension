@@ -5,12 +5,12 @@
 <h1 align="center">🌐 AI Screen Translator</h1>
 
 <p align="center">
-  <strong>Chụp vùng màn hình → AI đọc & dịch tức thì</strong><br>
-  Hỗ trợ đọc PDF/ebook bị khóa copy • Streaming real-time • OCR
+  <strong>Chụp vùng màn hình → Chia đôi trình duyệt → AI đọc & dịch tức thì</strong><br>
+  Hỗ trợ đọc truyện, PDF/ebook bị khóa copy • Streaming real-time • Chrome Side Panel
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-2.0.0-blueviolet?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/version-2.2.0-blueviolet?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/badge/manifest-v3-blue?style=for-the-badge" alt="Manifest V3">
   <img src="https://img.shields.io/badge/AI-OpenAI_GPT--4o-green?style=for-the-badge" alt="OpenAI">
   <img src="https://img.shields.io/badge/license-MIT-yellow?style=for-the-badge" alt="License">
@@ -18,149 +18,111 @@
 
 ---
 
-## ✨ Tính năng
+## ✨ Tính năng Nổi bật (v2.2.0)
 
 | Tính năng | Mô tả |
 |-----------|-------|
-| ⚡ **Streaming Response** | Text hiện real-time từng chữ, không cần đợi AI xử lý xong |
-| 📝 **OCR Mode** | Trích xuất text từ ảnh mà không dịch — copy text từ PDF bị khóa |
-| 🧪 **Test Connection** | Kiểm tra API Key hoạt động tức thì trước khi sử dụng |
-| 🤖 **Multi-Model** | Chọn GPT-4o (tốt nhất) / GPT-4o-mini (rẻ 17x) / GPT-4.1 |
-| 📊 **Token Tracking** | Hiển thị model & số tokens đã dùng trên mỗi response |
-| 📋 **Copy từng đoạn** | Nút copy riêng cho mỗi section (nguyên văn / bản dịch) |
-| 💾 **Export .txt** | Lưu toàn bộ phiên dịch thành file text |
-| 🖱️ **Context Menu** | Chuột phải → "Chụp & Dịch vùng này" |
+| 🖥️ **Chrome Side Panel** | Dịch thuật theo cơ chế Split-screen nguyên bản trình duyệt, không làm vỡ giao diện web |
+| ⚡ **Streaming Response** | Text tiếng Việt hiện real-time từng chữ giống hệt ChatGPT |
+| 📝 **OCR Mode** | Trích xuất văn bản từ hình ảnh/truyện tranh — copy text từ PDF bị khóa |
+| 🧪 **Thiết lập nhanh gọn** | Cài đặt API Key và Modal nằm rọ gọn trong Bánh răng (⚙) của Side Panel |
+| 🤖 **Multi-Model** | Hỗ trợ GPT-4o (tốt nhất) / GPT-4o-mini (siêu tiết kiệm) / GPT-4.5 |
 | 🌍 **9 ngôn ngữ** | Việt, Anh, Trung, Nhật, Hàn, Pháp, Đức, Tây Ban Nha, Thái |
-| 📚 **Lịch sử dịch** | Tự động lưu, không mất khi refresh trang |
+| 💾 **Lưu lịch sử & Export**| Tự động lưu 50 bản dịch gần nhất, hỗ trợ tải về dưới dạng `.txt` |
 
 ## 📸 Screenshots
 
+*(Hình ảnh minh họa Giao diện Side Panel)*
+
 <p align="center">
-  <img src="screenshots/popup.png" alt="Extension Popup" width="320">
-  &nbsp;&nbsp;&nbsp;
   <img src="screenshots/result-panel.png" alt="Translation Result Panel" width="480">
 </p>
 
 ## 🚀 Cài đặt
 
-### Cách 1: Từ source code
+### Cách 1: Từ mã nguồn
 
 ```bash
 # Clone repo
 git clone https://github.com/nguyenduchoai/ai-translate-extension.git
-
-# Hoặc tải ZIP và giải nén
 ```
 
 1. Mở Chrome → gõ `chrome://extensions/`
-2. Bật **Developer mode** (góc trên bên phải)
+2. Bật **Developer mode** (góc trên trành duyệt)
 3. Click **"Load unpacked"**
 4. Chọn thư mục `ai-translate-extension`
-5. Ghim 📌 extension lên toolbar
+5. **Ghim 📌 extension lên thanh công cụ** để tiện sử dụng.
 
-### Cách 2: Từ file ZIP
+### Cách 2: Bằng file ZIP
 
-1. Tải file `ai-translate-extension-v2.0.zip` từ [Releases](../../releases)
-2. Giải nén
-3. Load unpacked vào Chrome như trên
+1. Tải file `ai-translate-extension-v2.2.0.zip` từ [Releases](../../releases)
+2. Giải nén vào một thư mục
+3. Load unpacked thư mục đó tương tự Cách 1.
 
-## ⚙️ Cấu hình
+## ⚙️ Cấu hình API
 
-1. Click icon extension 🌐 trên toolbar
-2. Nhập **OpenAI API Key** (lấy tại [platform.openai.com/api-keys](https://platform.openai.com/api-keys))
-3. Click **🧪 Test kết nối** — xác nhận key hoạt động
-4. Chọn Model AI:
-
-| Model | Chất lượng | Giá |
-|-------|-----------|-----|
-| GPT-4o | ⭐⭐⭐⭐⭐ Tốt nhất | ~$2.50/1M tokens |
-| GPT-4o-mini | ⭐⭐⭐⭐ Đủ dùng | ~$0.15/1M tokens |
-| GPT-4.1 | ⭐⭐⭐⭐⭐ Mới nhất | ~$2.00/1M tokens |
-| GPT-4.1-mini | ⭐⭐⭐⭐ Cân bằng | ~$0.40/1M tokens |
-
-5. Chọn ngôn ngữ đích → **💾 Lưu cài đặt**
+1. **Click icon Extension** 🌐 trên toolbar để mở khóa giao diện **Side Panel** bên phải màn hình.
+2. Click biểu tượng **Bánh răng (⚙️)** để mở giao diện cài đặt.
+3. Nhập **OpenAI API Key** (vào [platform.openai.com/api-keys](https://platform.openai.com/api-keys) để lấy key).
+4. Click **🧪 Test Server** để kiểm tra mạng internet và API.
+5. Cuối cùng, nhấn **💾 Lưu lại**
 
 ## 🎯 Cách sử dụng
 
-### Dịch thuật
+### Dịch thuật nhanh
 
 ```
-Alt + Q  →  Kéo chuột chọn vùng  →  AI stream kết quả real-time ⚡
+Alt + Q  →  Kéo chuột tạo khung chữ nhật  →  AI xuất luồng chữ chạy lập tức ⚡
 ```
 
-Hoặc: **Chuột phải** trên trang → **🌐 Chụp & Dịch vùng này**
+Hoặc sử dụng chuột: **Chuột phải** trên trình duyệt → **🌐 Chụp & Dịch vùng này**
 
-### Trích xuất text (OCR)
+### Trích xuất text đơn thuần (Copy text truyện/ảnh)
 
-1. Mở popup → chọn **📝 Chỉ trích text (OCR)**
-2. `Alt + Q` → Kéo chọn vùng → AI trả text gốc chính xác
+1. Mở Cài đặt trong Side Panel (⚙️) → Chọn **📝 Chỉ trích Text**
+2. Nhấn `Alt + Q` quét đoạn cần lấy $\Rightarrow$ extension sẽ gõ ra đúng hệt nguyên bản để bạn Copy.
 
-### Phím tắt
+### Phím tắt mặc định
 
 | Phím | Chức năng |
 |------|-----------|
-| `Alt + Q` | Chụp & Dịch / OCR |
-| `ESC` | Hủy chọn vùng |
+| `Alt + Q` | Kích hoạt con trỏ cắt màn hình |
+| `ESC` | Hủy việc đang chọn vùng |
 
-> 💡 Đổi phím tắt tại `chrome://extensions/shortcuts`
+> 💡 *Bạn có thể thay đổi phím tắt trong `chrome://extensions/shortcuts`*
 
-## 🏗️ Cấu trúc dự án
+## 🏗️ Cấu trúc thư mục (v2.2)
 
 ```
 ai-translate-extension/
-├── manifest.json      # Chrome Extension config (Manifest V3)
-├── background.js      # Service worker: API calls, streaming, capture
-├── content.js         # UI injection: selection, result panel, streaming display
-├── content.css        # Styles injected vào mọi trang
-├── popup.html         # Popup UI: settings, model selector, test connection
-├── popup.js           # Popup logic
-├── guide.html         # Hướng dẫn chi tiết
-├── icons/             # Extension icons (16, 48, 128px)
-└── screenshots/       # Hình minh họa cho README
+├── manifest.json      # Chrome Extension config (Hỗ trợ Side Panel permission)
+├── background.js      # Service Worker: Logic screenshot, bắt API streaming, push data
+├── content.js         # Content Script: Tool cắt ảnh trên web, con trỏ crosshair
+├── content.css        # Reset layout an toàn
+├── sidepanel.html     # Giao diện Native Side Panel (Chia đôi web)
+├── sidepanel.js       # UI logic: streaming, lưu trữ, config, nút copy/xóa
+└── ...
 ```
-
-## 🔒 Bảo mật
-
-- API Key được lưu **cục bộ** trong Chrome Storage (`chrome.storage.sync`)
-- **Không gửi key** đến bất kỳ server nào ngoài OpenAI
-- Không thu thập dữ liệu người dùng
-- Mã nguồn mở 100%
-
-## 🌍 Use Cases
-
-- 📖 **Đọc ebook bị khóa** — Sách y khoa, kỹ thuật, tài liệu chuyên ngành
-- 📄 **PDF không copy được** — Tài liệu academia, nghiên cứu khoa học
-- 🖥️ **Dịch nhanh màn hình** — Bất kỳ text nào hiện trên màn hình
-- 📝 **OCR thông minh** — Trích xuất text từ hình ảnh, screenshot
-
-## 🛠️ Tech Stack
-
-- **Chrome Extension Manifest V3**
-- **OpenAI API** (GPT-4o Vision + Streaming)
-- **Vanilla JS** — Không framework, nhẹ, nhanh
-- **OffscreenCanvas** — Crop ảnh trong service worker
 
 ## 📝 Changelog
 
-### v2.0.0 (2026-04-03)
-- ⚡ Streaming response — text hiện real-time
-- 📝 OCR-only mode
-- 🧪 Test Connection button
-- 🤖 Multi-model selector (GPT-4o, 4o-mini, 4.1, 4.1-mini)
-- 📊 Token usage tracking
-- 🖱️ Context menu integration
-- 📋 Per-section copy buttons
-- 🛡️ Bullet-proof error handling
+### v2.2.0 (2026-04-03)
+- 🖥️ Nâng cấp toàn diện kiến trúc UI sang **Chrome Side Panel API**.
+- ✂️ Loại bỏ Popup rườm rà, gộp Settings (Cài đặt) thẳng vào Side Panel.
+- 🖱️ Nhấn icon extension tự mở Side panel lập tức.
+- 🪲 Sửa dứt điểm lỗi bóng mờ đen (Zombie Injections) khi ấn nút nhiều lần.
+- 👻 Màn hình cắt ảnh (selection) được làm trong suốt 100% không bị mờ đen.
 
-### v1.0.0 (2026-04-02)
-- 🎉 Initial release
-- Screen capture + OCR + Translation
-- History with auto-save
-- Export to .txt file
+### v2.0.0 (2026-04-03)
+- ⚡ Streaming response (Tách stream chữ).
+- 📝 OCR-only mode (Model Vision).
+- 🖱️ Tính năng Context Menu.
+
+### v1.0.0 
+- 🎉 Initial framework release.
 
 ## 📄 License
-
-MIT License — Tự do sử dụng, chỉnh sửa, phân phối.
+MIT License. Tự do sửa đổi, biên dịch và nâng cấp theo mục đích cá nhân.
 
 ---
 
