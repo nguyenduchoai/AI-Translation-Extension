@@ -4,12 +4,14 @@
   <meta charset="UTF-8">
   <title>AI Translator</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
     body {
       margin: 0;
       padding: 0;
-      background: linear-gradient(160deg, rgba(14, 14, 26, 0.99), rgba(10, 10, 20, 1));
+      background: linear-gradient(160deg, #0b0b14, #121223);
       color: #fff;
-      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
       height: 100vh;
       display: flex;
       flex-direction: column;
@@ -25,18 +27,25 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       user-select: none;
       flex-shrink: 0;
+      position: relative;
+      z-index: 200;
     }
     
     .ai-translator-result-title {
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 15px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
     
     .ai-translator-logo {
       font-size: 18px;
+      filter: drop-shadow(0 0 8px rgba(120, 90, 255, 0.4));
     }
     
     .ai-translator-result-actions {
@@ -65,6 +74,11 @@
       border-color: rgba(120, 90, 255, 0.3);
       transform: scale(1.08);
     }
+
+    .ai-translator-btn-settings.active {
+      background: rgba(120, 90, 255, 0.3);
+      border-color: rgba(120, 90, 255, 0.5);
+    }
     
     .ai-translator-result-body {
       padding: 20px;
@@ -72,46 +86,25 @@
       flex: 1;
       scrollbar-width: thin;
       scrollbar-color: rgba(120, 90, 255, 0.25) transparent;
+      position: relative;
     }
     
     .ai-translator-result-body::-webkit-scrollbar { width: 5px; }
     .ai-translator-result-body::-webkit-scrollbar-track { background: transparent; }
     .ai-translator-result-body::-webkit-scrollbar-thumb { background: rgba(120, 90, 255, 0.25); border-radius: 10px; }
     
-    /* Elements from content.css */
     .ai-translator-error-text {
-      color: rgba(255, 120, 120, 0.9);
-      font-size: 14px;
-      line-height: 1.6;
-      padding: 14px 18px;
-      background: rgba(255, 90, 90, 0.05);
-      border-radius: 10px;
-      border: 1px solid rgba(255, 90, 90, 0.1);
+      color: rgba(255, 120, 120, 0.9); font-size: 14px; line-height: 1.6; padding: 14px 18px;
+      background: rgba(255, 90, 90, 0.05); border-radius: 10px; border: 1px solid rgba(255, 90, 90, 0.1);
       white-space: pre-wrap;
     }
     
     .ai-translator-streaming { margin-bottom: 16px; }
-    .ai-translator-stream-header {
-      display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
-      font-size: 12px; color: rgba(120, 90, 255, 0.7); font-weight: 600; letter-spacing: 0.5px;
-    }
-    .ai-translator-stream-indicator {
-      width: 8px; height: 8px; border-radius: 50%; background: #785aff;
-      animation: pulse 1s ease-in-out infinite; box-shadow: 0 0 8px rgba(120, 90, 255, 0.5);
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.8); }
-    }
-    .ai-translator-stream-text {
-      color: rgba(255, 255, 255, 0.9); font-size: 14px; line-height: 1.75;
-      padding: 14px 18px; background: rgba(120, 90, 255, 0.06);
-      border: 1px solid rgba(120, 90, 255, 0.12); border-radius: 12px;
-      white-space: pre-wrap; word-break: break-word; position: relative;
-    }
-    .ai-translator-stream-text::after {
-      content: '▊'; color: #785aff; animation: blink 0.7s step-end infinite; font-weight: 400;
-    }
+    .ai-translator-stream-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 12px; color: rgba(120, 90, 255, 0.7); font-weight: 600; letter-spacing: 0.5px; }
+    .ai-translator-stream-indicator { width: 8px; height: 8px; border-radius: 50%; background: #785aff; animation: pulse 1s ease-in-out infinite; box-shadow: 0 0 8px rgba(120, 90, 255, 0.5); }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.8); } }
+    .ai-translator-stream-text { color: rgba(255, 255, 255, 0.9); font-size: 14px; line-height: 1.75; padding: 14px 18px; background: rgba(120, 90, 255, 0.06); border: 1px solid rgba(120, 90, 255, 0.12); border-radius: 12px; white-space: pre-wrap; word-break: break-word; }
+    .ai-translator-stream-text::after { content: '▊'; color: #785aff; animation: blink 0.7s step-end infinite; font-weight: 400; }
     @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
     
     .ai-translator-divider { border-top: 1px solid rgba(255, 255, 255, 0.06); margin: 20px 0; }
@@ -131,22 +124,48 @@
     .ai-translator-preview-img { max-width: 100%; max-height: 120px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.08); opacity: 0.75; transition: opacity 0.2s; }
     .ai-translator-preview-img:hover { opacity: 1; }
 
-    .ai-translator-empty {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      color: rgba(255,255,255,0.4);
-      font-size: 14px;
-      text-align: center;
-      padding: 20px;
+    .ai-translator-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: rgba(255,255,255,0.4); font-size: 14px; text-align: center; padding: 20px; }
+    .ai-translator-empty span { font-size: 40px; margin-bottom: 15px; opacity: 0.5; }
+
+    /* ====== SETTINGS OVERLAY ====== */
+    .settings-panel {
+      position: absolute; top: 62px; left: 0; right: 0; bottom: 0;
+      background: #0b0b14; z-index: 100; padding: 20px;
+      transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
     }
-    .ai-translator-empty span {
-      font-size: 40px;
-      margin-bottom: 15px;
-      opacity: 0.5;
-    }
+    .settings-panel.open { transform: translateX(0); }
+    
+    .mode-row { display: flex; gap: 8px; margin-bottom: 20px; }
+    .mode-btn { flex: 1; padding: 10px 12px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; color: rgba(255, 255, 255, 0.5); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.25s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .mode-btn:hover { background: rgba(120, 90, 255, 0.08); border-color: rgba(120, 90, 255, 0.2); color: rgba(255, 255, 255, 0.7); }
+    .mode-btn.active { background: rgba(120, 90, 255, 0.12); border-color: rgba(120, 90, 255, 0.35); color: #a78bfa; box-shadow: 0 0 15px rgba(120, 90, 255, 0.1); }
+    
+    .section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: rgba(255, 255, 255, 0.3); margin-bottom: 10px; }
+    .form-group { margin-bottom: 15px; }
+    .form-label { display: block; font-size: 12px; font-weight: 500; color: rgba(255, 255, 255, 0.6); margin-bottom: 5px; }
+    .form-input, .form-select { width: 100%; padding: 10px 14px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; color: #fff; font-size: 13px; outline: none; transition: all 0.2s; }
+    .form-input:focus, .form-select:focus { border-color: rgba(120, 90, 255, 0.5); background: rgba(120, 90, 255, 0.04); box-shadow: 0 0 0 3px rgba(120, 90, 255, 0.08); }
+    .form-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='rgba(255,255,255,0.4)' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+    .form-select option { background: #16162a; color: #fff; }
+    
+    .api-help { display: flex; align-items: center; gap: 5px; margin-top: 5px; font-size: 10px; color: rgba(255, 255, 255, 0.3); }
+    .api-help a { color: rgba(120, 90, 255, 0.6); text-decoration: none; }
+    
+    .btn-row { display: flex; gap: 8px; margin-top: 10px; }
+    .test-btn { flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; color: rgba(255, 255, 255, 0.6); font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .test-btn:hover { background: rgba(52, 211, 153, 0.08); border-color: rgba(52, 211, 153, 0.25); color: #34d399; }
+    .save-btn { flex: 1; padding: 10px; background: rgba(120, 90, 255, 0.1); border: 1px solid rgba(120, 90, 255, 0.2); border-radius: 10px; color: #a78bfa; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .save-btn:hover { background: rgba(120, 90, 255, 0.18); border-color: rgba(120, 90, 255, 0.4); }
+    
+    .status { margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 11px; display: none; }
+    .status.success { display: block; background: rgba(52, 211, 153, 0.06); border: 1px solid rgba(52, 211, 153, 0.12); color: #34d399; }
+    .status.error { display: block; background: rgba(255, 90, 90, 0.06); border: 1px solid rgba(255, 90, 90, 0.12); color: #ff6b6b; }
+    
+    .spinner { display: none; width: 14px; height: 14px; border: 2px solid rgba(52, 211, 153, 0.2); border-top-color: #34d399; border-radius: 50%; animation: spin 0.6s linear infinite; }
+    .test-btn.testing .spinner { display: inline-block; }
+    .test-btn.testing .btn-text { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -158,13 +177,69 @@
     <div class="ai-translator-result-actions">
       <button class="ai-translator-btn ai-translator-btn-capture" title="Chụp lại (Alt+Q)">🔄</button>
       <button class="ai-translator-btn ai-translator-btn-save" title="Lưu File (.txt)">💾</button>
-      <button class="ai-translator-btn ai-translator-btn-copy" title="Copy tất cả">📋</button>
       <button class="ai-translator-btn ai-translator-btn-trash" title="Xóa lịch sử">🗑️</button>
+      <button class="ai-translator-btn ai-translator-btn-settings" title="Cài đặt API">⚙️</button>
     </div>
   </div>
+  
   <div class="ai-translator-result-body" id="result-body">
-    <!-- Content goes here -->
+    <!-- Stream/History Content goes here -->
   </div>
+
+  <!-- Settings Panel overlay -->
+  <div class="settings-panel" id="settings-panel">
+    <div class="mode-row">
+      <button class="mode-btn active" id="modeTranslate" data-mode="translate">
+        <span>🌐 Dịch thuật</span>
+      </button>
+      <button class="mode-btn" id="modeOCR" data-mode="ocr">
+        <span>📝 Chỉ trích Text</span>
+      </button>
+    </div>
+
+    <div class="section-title">⚙️ Cài đặt API</div>
+
+    <div class="form-group">
+      <label class="form-label" for="apiKey">OpenAI API Key</label>
+      <input type="password" class="form-input" id="apiKey" placeholder="sk-...">
+      <div class="api-help">
+        <span>💡</span> Lấy tại <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 8px;">
+      <div class="form-group" style="flex: 1;">
+        <label class="form-label" for="model">Model AI</label>
+        <select class="form-select" id="model">
+          <option value="gpt-4o">GPT-4o (Tốt nhất)</option>
+          <option value="gpt-4o-mini">GPT-4o-mini (Rẻ hơn)</option>
+          <option value="gpt-4.5-preview">GPT-4.5 (Mới)</option>
+        </select>
+      </div>
+      <div class="form-group" style="flex: 1;">
+        <label class="form-label" for="targetLang">Dịch sang</label>
+        <select class="form-select" id="targetLang">
+          <option value="vi">🇻🇳 Tiếng Việt</option>
+          <option value="en">🇬🇧 English</option>
+          <option value="zh">🇨🇳 中文</option>
+          <option value="ja">🇯🇵 日本語</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="test-btn" id="testBtn">
+        <div class="spinner"></div>
+        <span class="btn-text">🧪 Test Server</span>
+      </button>
+      <button class="save-btn" id="saveBtn">
+        <span>💾 Lưu lại</span>
+      </button>
+    </div>
+    
+    <div class="status" id="status"></div>
+  </div>
+
   <script src="sidepanel.js"></script>
 </body>
 </html>

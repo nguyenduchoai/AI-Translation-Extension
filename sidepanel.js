@@ -3,6 +3,7 @@ let streamingEl = null;
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
   await renderHistoryPanel();
+  setupSettings();
   setupButtons();
 });
 
@@ -41,7 +42,7 @@ function setupButtons() {
     try {
       await chrome.runtime.sendMessage({ action: 'startCapture' });
     } catch (e) {
-      // In case background hasn't injected properly, we can trigger background capture
+      // Background hasn't injected properly
     }
   });
 
@@ -57,6 +58,122 @@ function setupButtons() {
   });
 
   document.querySelector('.ai-translator-btn-save').addEventListener('click', exportFile);
+}
+
+function setupSettings() {
+  const panel = document.getElementById('settings-panel');
+  const btn = document.querySelector('.ai-translator-btn-settings');
+  
+  btn.addEventListener('click', () => {
+    panel.classList.toggle('open');
+    btn.classList.toggle('active');
+  });
+  
+  const apiKeyInput = document.getElementById('apiKey');
+  const modelSelect = document.getElementById('model');
+  const targetLangSelect = document.getElementById('targetLang');
+  const saveBtn = document.getElementById('saveBtn');
+  const testBtn = document.getElementById('testBtn');
+  const statusEl = document.getElementById('status');
+  const modeTranslate = document.getElementById('modeTranslate');
+  const modeOCR = document.getElementById('modeOCR');
+
+  // Load saved settings
+  chrome.storage.sync.get({
+    apiKey: '',
+    targetLang: 'vi',
+    model: 'gpt-4o',
+    ocrOnly: false
+  }).then(saved => {
+    apiKeyInput.value = saved.apiKey;
+    targetLangSelect.value = saved.targetLang;
+    modelSelect.value = saved.model;
+    updateModeUI(saved.ocrOnly);
+  });
+
+  function updateModeUI(ocrOnly) {
+    if (ocrOnly) {
+      modeOCR.classList.add('active');
+      modeTranslate.classList.remove('active');
+    } else {
+      modeTranslate.classList.add('active');
+      modeOCR.classList.remove('active');
+    }
+  }
+
+  modeTranslate.addEventListener('click', () => {
+    updateModeUI(false);
+    chrome.storage.sync.set({ ocrOnly: false });
+  });
+
+  modeOCR.addEventListener('click', () => {
+    updateModeUI(true);
+    chrome.storage.sync.set({ ocrOnly: true });
+  });
+
+  function showStatus(type, message) {
+    statusEl.className = 'status ' + type;
+    statusEl.innerHTML = message;
+    if (type !== 'info') {
+      setTimeout(() => {
+        statusEl.className = 'status';
+        statusEl.innerHTML = '';
+      }, 4000);
+    }
+  }
+
+  testBtn.addEventListener('click', async () => {
+    const apiKey = apiKeyInput.value.trim();
+    if (!apiKey) {
+      showStatus('error', '⚠️ Nhập API Key trước khi test');
+      return;
+    }
+
+    testBtn.classList.add('testing');
+    showStatus('info', '🔄 Đang kiểm tra kết nối...');
+
+    try {
+      const result = await chrome.runtime.sendMessage({
+        action: 'testConnection',
+        apiKey: apiKey,
+        model: modelSelect.value
+      });
+
+      if (result.success) {
+        showStatus('success', result.message);
+      } else {
+        showStatus('error', '❌ ' + (result.error || 'Kết nối thất bại'));
+      }
+    } catch (err) {
+      showStatus('error', '❌ Lỗi: ' + err.message);
+    } finally {
+      testBtn.classList.remove('testing');
+    }
+  });
+
+  saveBtn.addEventListener('click', async () => {
+    const apiKey = apiKeyInput.value.trim();
+    if (!apiKey) {
+      showStatus('error', '⚠️ Vui lòng nhập API Key');
+      return;
+    }
+
+    await chrome.storage.sync.set({
+      apiKey,
+      targetLang: targetLangSelect.value,
+      model: modelSelect.value,
+      ocrOnly: modeOCR.classList.contains('active')
+    });
+
+    saveBtn.innerHTML = '<span>✅ Đã lưu!</span>';
+    setTimeout(() => {
+      saveBtn.innerHTML = '<span>💾 Lưu lại</span>';
+      panel.classList.remove('open');
+      btn.classList.remove('active');
+    }, 1500);
+
+    showStatus('success', '✅ Đã lưu cài đặt!');
+  });
 }
 
 function showLoadingIndicator(message) {

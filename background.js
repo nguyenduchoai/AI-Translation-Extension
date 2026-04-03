@@ -1,5 +1,7 @@
 // Background service worker - handles screenshot capture, AI translation, streaming, OCR
 
+chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(console.error);
+
 // Listen for keyboard shortcut
 chrome.commands.onCommand.addListener(async (command) => {
   if (command === 'capture-translate') {
