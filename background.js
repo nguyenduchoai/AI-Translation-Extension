@@ -72,6 +72,10 @@ async function startCapture() {
     if (!tab) return;
 
     try {
+      await chrome.sidePanel.open({ windowId: tab.windowId });
+    } catch(e) {}
+
+    try {
       await chrome.scripting.executeScript({
         target: { tabId: tab.id },
         files: ['content.js']
@@ -149,6 +153,7 @@ async function handleCaptureAndTranslate(message, tabId) {
 
   const safeSend = async (msg) => {
     try { await chrome.tabs.sendMessage(tabId, msg); } catch (e) {}
+    try { chrome.runtime.sendMessage(msg); } catch (e) {}
   };
 
   try {
@@ -274,6 +279,7 @@ If the image contains medical or specialized terminology, keep the original term
 
   const safeSend = async (msg) => {
     try { await chrome.tabs.sendMessage(tabId, msg); } catch (e) {}
+    try { chrome.runtime.sendMessage(msg); } catch (e) {}
   };
 
   while (true) {
