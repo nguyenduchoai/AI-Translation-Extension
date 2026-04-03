@@ -9,8 +9,7 @@
   left: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
-  background: rgba(0, 0, 0, 0.4) !important;
-  backdrop-filter: blur(2px) !important;
+  background: transparent !important;
   z-index: 2147483640 !important;
   cursor: crosshair !important;
   display: flex;
