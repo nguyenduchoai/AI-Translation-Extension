@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hướng dẫn - AI Screen Translator v2.0</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(160deg, #0d0d1a 0%, #12122a 50%, #0a0a18 100%);
+      color: #e0e0e0;
+      min-height: 100vh;
+      line-height: 1.7;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 40px 24px 60px;
+    }
+
+    /* Header */
+    .hero {
+      text-align: center;
+      margin-bottom: 48px;
+      padding: 40px 24px;
+      background: linear-gradient(135deg, rgba(120,90,255,0.08), rgba(120,90,255,0.02));
+      border: 1px solid rgba(120,90,255,0.15);
+      border-radius: 20px;
+    }
+
+    .hero-icon {
+      font-size: 56px;
+      display: block;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 0 20px rgba(120,90,255,0.4));
+    }
+
+    .hero h1 {
+      font-size: 28px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .hero p { color: rgba(255,255,255,0.5); font-size: 15px; }
+
+    .hero .badge {
+      display: inline-block;
+      background: rgba(120,90,255,0.15);
+      border: 1px solid rgba(120,90,255,0.3);
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #a78bfa;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+
+    /* Steps */
+    .steps { display: flex; flex-direction: column; gap: 32px; }
+
+    .step {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 28px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .step:hover {
+      border-color: rgba(120,90,255,0.3);
+      background: rgba(120,90,255,0.04);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+    }
+
+    .step-number {
+      position: absolute;
+      top: -14px;
+      left: 24px;
+      background: linear-gradient(135deg, #785aff, #5a3fd6);
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      box-shadow: 0 4px 15px rgba(120,90,255,0.4);
+    }
+
+    .step h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step p { color: rgba(255,255,255,0.65); font-size: 14px; margin-bottom: 12px; }
+    .step ol, .step ul { padding-left: 20px; color: rgba(255,255,255,0.7); font-size: 14px; }
+    .step li { margin-bottom: 10px; line-height: 1.7; }
+    .step li strong { color: #fff; }
+
+    a { color: #a78bfa; text-decoration: none; font-weight: 600; transition: color 0.2s; }
+    a:hover { color: #c4b5fd; text-decoration: underline; }
+
+    .url-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(120,90,255,0.2);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin: 12px 0;
+      font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+      font-size: 13px;
+      color: #a78bfa;
+      cursor: pointer;
+      transition: all 0.2s;
+      word-break: break-all;
+    }
+
+    .url-box:hover { background: rgba(120,90,255,0.08); border-color: rgba(120,90,255,0.4); }
+    .url-box .copy-icon { flex-shrink: 0; font-size: 16px; }
+
+    .highlight {
+      background: rgba(52,211,153,0.08);
+      border: 1px solid rgba(52,211,153,0.2);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin: 12px 0;
+      font-size: 13px;
+      color: rgba(52,211,153,0.9);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .warning {
+      background: rgba(251,191,36,0.08);
+      border: 1px solid rgba(251,191,36,0.2);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin: 12px 0;
+      font-size: 13px;
+      color: rgba(251,191,36,0.9);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .info {
+      background: rgba(120,90,255,0.08);
+      border: 1px solid rgba(120,90,255,0.2);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin: 12px 0;
+      font-size: 13px;
+      color: rgba(167,139,250,0.9);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .icon { flex-shrink: 0; font-size: 16px; }
+
+    kbd {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 5px;
+      padding: 2px 8px;
+      font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+      font-size: 12px;
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(120,90,255,0.2), transparent);
+      margin: 40px 0;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 32px 0;
+      color: rgba(255,255,255,0.3);
+      font-size: 12px;
+    }
+
+    .quick-start {
+      background: linear-gradient(135deg, rgba(120,90,255,0.1), rgba(52,211,153,0.05));
+      border: 1px solid rgba(120,90,255,0.2);
+      border-radius: 16px;
+      padding: 24px 28px;
+      margin-bottom: 40px;
+    }
+
+    .quick-start h3 { color: #fff; font-size: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .quick-start ol { padding-left: 20px; color: rgba(255,255,255,0.7); font-size: 14px; }
+    .quick-start li { margin-bottom: 6px; }
+
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 13px; }
+    th { color: rgba(255,255,255,0.5); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+    td { color: rgba(255,255,255,0.7); }
+    td:first-child { color: #fff; font-weight: 500; }
+
+    /* New in v2 */
+    .new-badge {
+      background: rgba(52,211,153,0.15);
+      border: 1px solid rgba(52,211,153,0.3);
+      color: #34d399;
+      padding: 1px 8px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      vertical-align: middle;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .feature-card .feat-icon { font-size: 28px; margin-bottom: 8px; display: block; }
+    .feature-card .feat-title { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+    .feature-card .feat-desc { font-size: 11px; color: rgba(255,255,255,0.45); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Hero -->
+    <div class="hero">
+      <span class="hero-icon">🌐</span>
+      <h1>AI Screen Translator</h1>
+      <p>Hướng dẫn cài đặt & sử dụng</p>
+      <div class="badge">v2.0 — Streaming • OCR • Multi-Model</div>
+    </div>
+
+    <!-- What's New -->
+    <div class="quick-start">
+      <h3>🆕 Tính năng mới v2.0</h3>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <span class="feat-icon">⚡</span>
+          <div class="feat-title">Streaming</div>
+          <div class="feat-desc">Text hiện real-time từng chữ</div>
+        </div>
+        <div class="feature-card">
+          <span class="feat-icon">📝</span>
+          <div class="feat-title">OCR Mode</div>
+          <div class="feat-desc">Trích xuất text không dịch</div>
+        </div>
+        <div class="feature-card">
+          <span class="feat-icon">🧪</span>
+          <div class="feat-title">Test Connection</div>
+          <div class="feat-desc">Kiểm tra API Key tức thì</div>
+        </div>
+        <div class="feature-card">
+          <span class="feat-icon">🤖</span>
+          <div class="feat-title">Multi-Model</div>
+          <div class="feat-desc">GPT-4o, 4o-mini, 4.1</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Start -->
+    <div class="quick-start">
+      <h3>⚡ 4 bước bắt đầu</h3>
+      <ol>
+        <li>Cài extension vào Chrome (Load unpacked)</li>
+        <li>Lấy API Key từ <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a></li>
+        <li>Dán key → <strong>Test kết nối</strong> → Lưu</li>
+        <li>Nhấn <kbd>Alt</kbd> + <kbd>Q</kbd> → Kéo chọn vùng → Xong!</li>
+      </ol>
+    </div>
+
+    <!-- Steps -->
+    <div class="steps">
+
+      <!-- Step 1 -->
+      <div class="step">
+        <div class="step-number">1</div>
+        <h2>📦 Cài Extension vào Chrome</h2>
+        <ol>
+          <li>Mở Chrome</li>
+          <li>Gõ vào thanh địa chỉ:
+            <div class="url-box" onclick="copyText('chrome://extensions/')">
+              <span>chrome://extensions/</span>
+              <span class="copy-icon">📋</span>
+            </div>
+          </li>
+          <li>Bật <strong>Developer mode</strong> (góc trên bên phải)</li>
+          <li>Click <strong>"Load unpacked"</strong></li>
+          <li>Chọn thư mục <strong>ai-translate-extension</strong></li>
+        </ol>
+        <div class="highlight">
+          <span class="icon">💡</span>
+          <span>Click 🧩 (Extensions) → Ghim 📌 <strong>"AI Screen Translator"</strong> lên toolbar</span>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step">
+        <div class="step-number">2</div>
+        <h2>🔑 Lấy API Key OpenAI</h2>
+        <ol>
+          <li>
+            <strong>Truy cập:</strong>
+            <div class="url-box" onclick="window.open('https://platform.openai.com/api-keys', '_blank')">
+              <span>https://platform.openai.com/api-keys</span>
+              <span class="copy-icon">🔗</span>
+            </div>
+          </li>
+          <li><strong>Đăng nhập</strong> tài khoản OpenAI</li>
+          <li>Click <strong>"Create new secret key"</strong></li>
+          <li><strong>Copy API Key</strong> — dạng: <code style="background:rgba(0,0,0,0.3);padding:2px 8px;border-radius:4px;color:#a78bfa;font-size:12px;">sk-...</code></li>
+        </ol>
+        <div class="warning">
+          <span class="icon">⚠️</span>
+          <span><strong>Bảo mật:</strong> API Key là riêng tư. Key được lưu cục bộ trong Chrome. Cần có credit trong tài khoản để sử dụng.</span>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step">
+        <div class="step-number">3</div>
+        <h2>⚙️ Cấu hình Extension</h2>
+        <ol>
+          <li>Click icon extension 🌐 trên toolbar</li>
+          <li><strong>Dán API Key</strong> vào ô "OpenAI API Key"</li>
+          <li>Click <strong>🧪 Test kết nối</strong> — kiểm tra key hoạt động <span class="new-badge">MỚI</span></li>
+          <li>Chọn <strong>Model AI</strong>:
+            <table>
+              <tr><th>Model</th><th>Ưu điểm</th><th>Giá</th></tr>
+              <tr><td>GPT-4o</td><td>Chất lượng tốt nhất</td><td>~$2.50/1M tokens</td></tr>
+              <tr><td>GPT-4o-mini</td><td>Nhanh, rẻ, đủ dùng</td><td>~$0.15/1M tokens</td></tr>
+              <tr><td>GPT-4.1</td><td>Model mới nhất</td><td>~$2.00/1M tokens</td></tr>
+              <tr><td>GPT-4.1-mini</td><td>Cân bằng giá/chất lượng</td><td>~$0.40/1M tokens</td></tr>
+            </table>
+          </li>
+          <li>Chọn ngôn ngữ dịch → Click <strong>💾 Lưu cài đặt</strong></li>
+        </ol>
+        <div class="highlight">
+          <span class="icon">💡</span>
+          <span>Chỉ cần cấu hình 1 lần. Extension nhớ cài đặt vĩnh viễn.</span>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="step">
+        <div class="step-number">4</div>
+        <h2>🎯 Cách sử dụng</h2>
+
+        <p><strong>Cách 1: Phím tắt</strong></p>
+        <ol>
+          <li>Nhấn <kbd>Alt</kbd> + <kbd>Q</kbd></li>
+          <li>Màn hình tối đi, con trỏ thành dấu <strong>+</strong></li>
+          <li><strong>Kéo chuột</strong> khoanh vùng text cần dịch</li>
+          <li>Thả chuột → Text <strong>stream real-time</strong> trong panel bên phải ⚡</li>
+        </ol>
+
+        <p style="margin-top:16px"><strong>Cách 2: Chuột phải</strong> <span class="new-badge">MỚI</span></p>
+        <ol>
+          <li>Chuột phải trên trang bất kỳ</li>
+          <li>Chọn <strong>🌐 Chụp & Dịch vùng này</strong></li>
+        </ol>
+
+        <p style="margin-top:16px"><strong>Chế độ OCR</strong> <span class="new-badge">MỚI</span></p>
+        <ol>
+          <li>Mở popup → chọn <strong>📝 Chỉ trích text (OCR)</strong></li>
+          <li>Chụp vùng → AI trả về text gốc chính xác, không dịch</li>
+        </ol>
+
+        <div class="info">
+          <span class="icon">⚡</span>
+          <span><strong>Streaming:</strong> Text hiện từng chữ real-time ngay khi AI xử lý, không cần đợi hết mới thấy kết quả!</span>
+        </div>
+
+        <div class="info">
+          <span class="icon">📋</span>
+          <span>Mỗi đoạn dịch có nút <strong>📋 Copy</strong> riêng. Hoặc copy toàn bộ, lưu file .txt, xóa lịch sử từ thanh công cụ panel.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Tips -->
+    <div class="step" style="margin-top: 0;">
+      <h2>💡 Mẹo & Phím tắt</h2>
+      <table>
+        <tr><th style="width:40%">Câu hỏi</th><th>Trả lời</th></tr>
+        <tr>
+          <td>Nên dùng model nào?</td>
+          <td><strong>GPT-4o-mini</strong> cho sách thường, <strong>GPT-4o</strong> cho tài liệu chuyên ngành y khoa/kỹ thuật.</td>
+        </tr>
+        <tr>
+          <td>OCR mode dùng khi nào?</td>
+          <td>Khi cần copy text gốc từ PDF/ebook bị khóa mà không cần dịch.</td>
+        </tr>
+        <tr>
+          <td>Trang nào dùng được?</td>
+          <td>Mọi trang! PDF bị khóa, ebook viewer, hình ảnh có chữ...</td>
+        </tr>
+        <tr>
+          <td>Đổi phím tắt?</td>
+          <td>Vào <code style="color:#a78bfa;font-size:12px">chrome://extensions/shortcuts</code></td>
+        </tr>
+        <tr>
+          <td>Test key báo lỗi?</td>
+          <td>Kiểm tra: key đúng, tài khoản có credit, không bị rate limit.</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Languages -->
+    <div class="step" style="margin-top: 0;">
+      <h2>🌍 Ngôn ngữ hỗ trợ</h2>
+      <table>
+        <tr><td>🇻🇳 Tiếng Việt</td><td>🇬🇧 English</td><td>🇨🇳 中文</td></tr>
+        <tr><td>🇯🇵 日本語</td><td>🇰🇷 한국어</td><td>🇫🇷 Français</td></tr>
+        <tr><td>🇩🇪 Deutsch</td><td>🇪🇸 Español</td><td>🇹🇭 ภาษาไทย</td></tr>
+      </table>
+    </div>
+
+    <div class="footer">
+      <p>AI Screen Translator v2.0 • OpenAI GPT-4o / GPT-4.1</p>
+      <p style="margin-top:4px">Made with ❤️ for Vietnamese readers</p>
+    </div>
+  </div>
+
+  <script>
+    function copyText(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        event.currentTarget.style.borderColor = 'rgba(52,211,153,0.5)';
+        const copyIcon = event.currentTarget.querySelector('.copy-icon');
+        if (copyIcon) copyIcon.textContent = '✅';
+        setTimeout(() => {
+          event.currentTarget.style.borderColor = '';
+          if (copyIcon) copyIcon.textContent = '📋';
+        }, 1500);
+      });
+    }
+  </script>
+</body>
+</html>
