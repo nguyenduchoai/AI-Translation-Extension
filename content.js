@@ -20,7 +20,11 @@
         sendResponse({ status: 'ok' });
         break;
       case 'showLoading':
-        showLoadingIndicator(message.message);
+        if (message.rect) {
+          showLoadingAtPosition(message.rect.x, message.rect.y, message.rect.width, message.rect.height, message.message);
+        } else {
+          showLoadingIndicator(message.message);
+        }
         sendResponse({ status: 'ok' });
         break;
       case 'streamChunk':
@@ -113,9 +117,9 @@
 
     if (w < 20 || h < 20) { cleanup(); return; }
 
-    if (overlay) overlay.style.display = 'none';
+    if (overlay) overlay.style.setProperty('display', 'none', 'important');
+    if (selectionBox) selectionBox.style.setProperty('display', 'none', 'important');
     document.body.style.cursor = '';
-    selectionBox.style.display = 'none';
 
     setTimeout(() => {
       chrome.runtime.sendMessage({
@@ -129,9 +133,7 @@
       }).catch(err => {
         showError('❌ Lỗi kết nối. Reload extension tại chrome://extensions');
       });
-
-      showLoadingAtPosition(x, y, w, h);
-    }, 100);
+    }, 150);
   }
 
   function onKeyDown(e) {
@@ -141,7 +143,7 @@
   // ======================================
   // Loading
   // ======================================
-  function showLoadingAtPosition(x, y, w, h) {
+  function showLoadingAtPosition(x, y, w, h, msg) {
     cleanup(true);
     const loader = document.createElement('div');
     loader.id = 'ai-translator-loader';
@@ -152,7 +154,7 @@
     loader.innerHTML = `
       <div class="ai-translator-loader-content">
         <div class="ai-translator-spinner"></div>
-        <div class="ai-translator-loader-text">Đang xử lý...</div>
+        <div class="ai-translator-loader-text">${msg || 'Đang xử lý...'}</div>
       </div>
     `;
     document.documentElement.appendChild(loader);

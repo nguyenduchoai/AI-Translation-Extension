@@ -172,7 +172,8 @@ async function handleCaptureAndTranslate(message, tabId) {
 
     await safeSend({
       action: 'showLoading',
-      message: settings.ocrOnly ? '🔍 Đang trích xuất text...' : '🔄 Đang dịch...'
+      message: settings.ocrOnly ? '🔍 Đang trích xuất text...' : '🔄 Đang dịch...',
+      rect: rect
     });
 
     // Use streaming
