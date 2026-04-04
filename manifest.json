@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "AI Screen Translator",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Chụp vùng màn hình và dịch sang tiếng Việt bằng AI - Hỗ trợ streaming, OCR, đọc PDF/ebook bị khóa",
   "permissions": [
     "activeTab",

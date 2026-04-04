@@ -72,6 +72,7 @@ function setupSettings() {
   const apiKeyInput = document.getElementById('apiKey');
   const modelSelect = document.getElementById('model');
   const targetLangSelect = document.getElementById('targetLang');
+  const specialtySelect = document.getElementById('specialty');
   const saveBtn = document.getElementById('saveBtn');
   const testBtn = document.getElementById('testBtn');
   const statusEl = document.getElementById('status');
@@ -83,11 +84,13 @@ function setupSettings() {
     apiKey: '',
     targetLang: 'vi',
     model: 'gpt-4o',
-    ocrOnly: false
+    ocrOnly: false,
+    specialty: 'dentistry'
   }).then(saved => {
     apiKeyInput.value = saved.apiKey;
     targetLangSelect.value = saved.targetLang;
     modelSelect.value = saved.model;
+    specialtySelect.value = saved.specialty;
     updateModeUI(saved.ocrOnly);
   });
 
@@ -162,6 +165,7 @@ function setupSettings() {
       apiKey,
       targetLang: targetLangSelect.value,
       model: modelSelect.value,
+      specialty: specialtySelect.value,
       ocrOnly: modeOCR.classList.contains('active')
     });
 

@@ -166,7 +166,8 @@ async function handleCaptureAndTranslate(message, tabId) {
       apiKey: '',
       targetLang: 'vi',
       model: 'gpt-4o',
-      ocrOnly: false
+      ocrOnly: false,
+      specialty: 'dentistry'
     });
 
     if (!settings.apiKey) {
@@ -190,7 +191,8 @@ async function handleCaptureAndTranslate(message, tabId) {
       settings.targetLang,
       settings.model,
       settings.ocrOnly,
-      tabId
+      tabId,
+      settings.specialty
     );
 
     // Final result
@@ -217,7 +219,7 @@ async function handleCaptureAndTranslate(message, tabId) {
 // ============================================================
 // Streaming Translation
 // ============================================================
-async function translateWithAIStreaming(imageBase64, apiKey, targetLang, model, ocrOnly, tabId) {
+async function translateWithAIStreaming(imageBase64, apiKey, targetLang, model, ocrOnly, tabId, specialty) {
   const langNames = {
     'vi': 'Vietnamese', 'en': 'English', 'zh': 'Chinese',
     'ja': 'Japanese', 'ko': 'Korean', 'fr': 'French',
@@ -226,33 +228,141 @@ async function translateWithAIStreaming(imageBase64, apiKey, targetLang, model, 
 
   const targetLangName = langNames[targetLang] || 'Vietnamese';
 
-  let prompt;
+  // ============================================================
+  // Specialty-specific expert profiles
+  // ============================================================
+  const specialtyProfiles = {
+    'dentistry': {
+      title: 'Giáo sư đầu ngành Nha khoa (Dentistry)',
+      expertise: 'dental sciences, oral pathology, dental materials, restorative dentistry, dental anatomy, occlusion, and clinical dentistry',
+      context: 'dental textbooks, clinical guidelines, and peer-reviewed dental journals'
+    },
+    'orthodontics': {
+      title: 'Giáo sư đầu ngành Chỉnh nha (Orthodontics)',
+      expertise: 'orthodontic biomechanics, cephalometric analysis, malocclusion classification, fixed and removable appliances, clear aligner therapy, and craniofacial growth',
+      context: 'orthodontic textbooks such as Proffit, Nanda, and Burstone, clinical case reports, and orthodontic journals'
+    },
+    'implantology': {
+      title: 'Giáo sư đầu ngành Implant Nha khoa (Implantology)',
+      expertise: 'dental implant systems, osseointegration, bone grafting, sinus lift procedures, guided bone regeneration (GBR), immediate loading protocols, and peri-implant diseases',
+      context: 'implantology textbooks such as Misch, ITI Treatment Guide, and implant-related journals'
+    },
+    'endodontics': {
+      title: 'Giáo sư đầu ngành Nội nha (Endodontics)',
+      expertise: 'pulp biology, root canal anatomy, endodontic instrumentation, obturation techniques, endodontic retreatment, vital pulp therapy, and apical surgery',
+      context: 'endodontic textbooks such as Cohen\'s Pathways of the Pulp, Ingle\'s Endodontics, and endodontic journals'
+    },
+    'periodontics': {
+      title: 'Giáo sư đầu ngành Nha chu (Periodontics)',
+      expertise: 'periodontal disease classification, scaling and root planing, flap surgery, mucogingival surgery, regenerative periodontics, and periodontal-systemic medicine links',
+      context: 'periodontal textbooks such as Carranza, Lindhe, and periodontal journals'
+    },
+    'prosthodontics': {
+      title: 'Giáo sư đầu ngành Phục hình răng (Prosthodontics)',
+      expertise: 'fixed prosthodontics, removable partial dentures, complete dentures, maxillofacial prosthetics, CAD/CAM dentistry, dental ceramics, and occlusal rehabilitation',
+      context: 'prosthodontic textbooks such as Shillingburg, McCracken, and prosthodontic journals'
+    },
+    'oral-surgery': {
+      title: 'Giáo sư đầu ngành Phẫu thuật miệng (Oral & Maxillofacial Surgery)',
+      expertise: 'dentoalveolar surgery, orthognathic surgery, TMJ disorders, oral pathology, trauma surgery, and surgical management of odontogenic infections',
+      context: 'oral surgery textbooks such as Peterson, Hupp, and oral surgery journals'
+    },
+    'pediatric-dentistry': {
+      title: 'Giáo sư đầu ngành Nha khoa trẻ em (Pediatric Dentistry)',
+      expertise: 'pediatric dental behavior management, pulp therapy for primary teeth, space management, traumatic dental injuries in children, and preventive dentistry',
+      context: 'pediatric dentistry textbooks such as McDonald, Pinkham, and pediatric dental journals'
+    },
+    'medicine': {
+      title: 'Giáo sư đầu ngành Y khoa (Medicine)',
+      expertise: 'internal medicine, clinical pharmacology, pathophysiology, diagnostic medicine, and evidence-based medicine',
+      context: 'medical textbooks such as Harrison, Cecil, and peer-reviewed medical journals'
+    },
+    'pharmacy': {
+      title: 'Giáo sư đầu ngành Dược học (Pharmacy)',
+      expertise: 'pharmacology, pharmacokinetics, drug interactions, pharmaceutical chemistry, clinical pharmacy, and drug delivery systems',
+      context: 'pharmacy textbooks such as Goodman & Gilman, applied therapeutics, and pharmaceutical journals'
+    },
+    'general': {
+      title: 'Chuyên gia dịch thuật học thuật',
+      expertise: 'academic translation, technical writing, and cross-language scientific communication',
+      context: 'academic textbooks, research papers, and scholarly publications'
+    }
+  };
+
+  const profile = specialtyProfiles[specialty] || specialtyProfiles['dentistry'];
+
+  // ============================================================
+  // Build system message (expert persona)
+  // ============================================================
+  const systemMessage = `You are a ${profile.title} — one of the most respected and authoritative experts in ${profile.expertise}.
+
+You have 30+ years of clinical experience, have published extensively in top-tier journals, and have trained generations of practitioners. You regularly author and review ${profile.context}.
+
+YOUR ROLE: You are translating specialized academic/clinical material for fellow professionals and advanced students. Your translations must reflect the depth of understanding that only a true domain expert possesses.
+
+TRANSLATION PRINCIPLES:
+1. ACCURACY FIRST: Every concept, mechanism, classification, and clinical detail must be translated with absolute precision. Never simplify or omit nuanced information.
+2. TERMINOLOGY HANDLING:
+   - Use the standard accepted ${targetLangName} terminology used in ${targetLangName}-language academia and clinical practice.
+   - For critical technical terms, include the original English term in parentheses on FIRST occurrence only. Example: "cắn hở (open bite)" or "tủy hoại tử (pulp necrosis)".
+   - For universally-used English terms that have no widely-accepted ${targetLangName} equivalent, keep the English term as-is.
+   - Drug names: use INN (International Nonproprietary Names) consistently.
+3. READABILITY: Write in clear, professional ${targetLangName} academic prose. The translation should read naturally — as if originally written in ${targetLangName} by a professor, not machine-translated.
+4. STRUCTURE PRESERVATION: Maintain all headings, numbered lists, bullet points, paragraph breaks, and logical structure from the original.
+5. CONTEXTUAL INTELLIGENCE: When the source text is ambiguous, use your deep domain expertise to choose the most clinically/academically appropriate interpretation.
+
+STRICT RULES:
+- Output ONLY the translated text.
+- Do NOT add introductions, commentary, summaries, or conversational text.
+- Do NOT say "Here is the translation" or anything similar.
+- Do NOT apologize or explain.
+- If you cannot read part of the image, translate what you can see and mark unclear parts with [...].`;
+
+  let userPrompt;
   if (ocrOnly) {
-    prompt = `Extract ALL text from this image exactly as written. Preserve the original formatting, paragraph breaks, and structure. Output ONLY the extracted text, nothing else.`;
+    userPrompt = `Extract ALL text from this image exactly as written. Preserve the original formatting, paragraph breaks, and structure. Output ONLY the extracted text, nothing else.`;
   } else {
-    prompt = `Translate the textbook passage shown in this image into ${targetLangName}. 
-Output ONLY the translation. Do NOT output any conversational text, apologies, or explanations.
-If the image contains medical or specialized terminology, keep the original terms in parentheses.`;
+    userPrompt = `Translate the content shown in this image into ${targetLangName}. Apply your full expertise as a ${profile.title} to ensure the translation is accurate, professional, and reads naturally for ${targetLangName}-speaking professionals.`;
   }
 
   const url = 'https://api.openai.com/v1/chat/completions';
+
+  const messages = ocrOnly
+    ? [{
+        role: 'user',
+        content: [
+          { type: 'text', text: userPrompt },
+          {
+            type: 'image_url',
+            image_url: {
+              url: `data:image/png;base64,${imageBase64}`,
+              detail: 'high'
+            }
+          }
+        ]
+      }]
+    : [
+        { role: 'system', content: systemMessage },
+        {
+          role: 'user',
+          content: [
+            { type: 'text', text: userPrompt },
+            {
+              type: 'image_url',
+              image_url: {
+                url: `data:image/png;base64,${imageBase64}`,
+                detail: 'high'
+              }
+            }
+          ]
+        }
+      ];
+
   const body = {
     model: model || 'gpt-4o',
-    messages: [{
-      role: 'user',
-      content: [
-        { type: 'text', text: prompt },
-        {
-          type: 'image_url',
-          image_url: {
-            url: `data:image/png;base64,${imageBase64}`,
-            detail: 'high'
-          }
-        }
-      ]
-    }],
+    messages: messages,
     max_tokens: 4096,
-    temperature: 0.1,
+    temperature: 0.15,
     stream: true,
     stream_options: { include_usage: true }
   };
