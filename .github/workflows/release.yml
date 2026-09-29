@@ -13,7 +13,10 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  windows-vieneu:
+    uses: ./.github/workflows/windows-vieneu.yml
   release:
+    needs: windows-vieneu
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

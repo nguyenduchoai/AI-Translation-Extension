@@ -17,6 +17,8 @@ REQUIRED_FILES = (
     "companion/server.py",
     "companion/speech_engine.py",
     "companion/start-vieneu.command",
+    "companion/start-vieneu.bat",
+    "companion/start-vieneu.ps1",
 )
 
 

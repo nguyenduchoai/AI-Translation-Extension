@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-2.6.0-blueviolet?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/version-2.6.1-blueviolet?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/badge/manifest-v3-blue?style=for-the-badge" alt="Manifest V3">
   <img src="https://img.shields.io/badge/AI-OpenAI_+_Gemini-green?style=for-the-badge" alt="OpenAI">
   <img src="https://img.shields.io/badge/license-MIT-yellow?style=for-the-badge" alt="License">
@@ -18,7 +18,7 @@
 
 ---
 
-## ✨ Tính năng Nổi bật (v2.6.0)
+## ✨ Tính năng Nổi bật (v2.6.1)
 
 | Tính năng | Mô tả |
 |-----------|-------|
@@ -59,7 +59,7 @@ git clone https://github.com/nguyenduchoai/AI-Translation-Extension.git
 
 ### Cách 2: Bằng file ZIP
 
-1. Tải file `ai-translate-extension-v2.6.0.zip` từ [Releases](https://github.com/nguyenduchoai/AI-Translation-Extension/releases/latest)
+1. Tải file `ai-translate-extension-v2.6.1.zip` từ [Releases](https://github.com/nguyenduchoai/AI-Translation-Extension/releases/latest)
 2. Giải nén vào một thư mục
 3. Load unpacked thư mục đó tương tự Cách 1.
 
@@ -118,7 +118,7 @@ Hoặc sử dụng chuột: **Chuột phải** trên trình duyệt → **🌐 C
 
 **Đã triển khai TTS**, chưa có thu âm/nhận dạng/dịch cuộc họp Meet hoặc Zoom. VieNeu tạo giọng trong Python trên máy; extension nhận PCM streaming và phát trong trình duyệt. Không quảng cáo model VieNeu chạy hoàn toàn trong browser.
 
-1. Tải thêm **`vieneu-local-v2.6.0.zip`** trong [Releases](https://github.com/nguyenduchoai/AI-Translation-Extension/releases/latest), giải nén và mở **`start-vieneu.command`** trên macOS. Cần Python 3.12 hoặc `uv`; xem [hướng dẫn VieNeu local](companion/README.md). Lần đầu tải khoảng 580 MiB model, ngoài các thư viện Python.
+1. Tải thêm **`vieneu-local-v2.6.1.zip`** trong [Releases](https://github.com/nguyenduchoai/AI-Translation-Extension/releases/latest), giải nén toàn bộ và mở **`companion/start-vieneu.bat`** trên Windows hoặc **`companion/start-vieneu.command`** trên macOS. Windows tự chuẩn bị Python/thư viện qua uv (cài bằng WinGet nếu thiếu); Mac cần Python 3.12 hoặc `uv`. Xem [hướng dẫn VieNeu local](companion/README.md). Lần đầu tải khoảng 580 MiB model, ngoài các thư viện Python.
 2. Đợi ứng dụng VieNeu báo sẵn sàng. Trong extension, mở **🔊 Đọc tiếng Việt → VieNeu local → Kết nối**.
 3. Chọn giọng và **Nghe thử**. Có thể dán bất kỳ câu trả lời AI bằng tiếng Việt vào ô văn bản rồi bấm **Đọc nội dung**, không cần API key dịch.
 4. Bật **Tự đọc từng câu khi AI dịch** rồi chụp/dịch ảnh như trước. Câu hoàn chỉnh được gửi tới VieNeu ngay khi AI trả chữ, không đợi hết bài.
@@ -160,14 +160,18 @@ Yêu cầu Node.js 20+ và Python 3; không cần cài thư viện ngoài.
 npm test
 npm run package
 # Hoặc kiểm tra phiên bản tag trước khi phát hành:
-python3 scripts/package-extension.py --tag v2.6.0
+python3 scripts/package-extension.py --tag v2.6.1
 ```
 
-ZIP nằm tại `dist/ai-translate-extension-v2.6.0.zip`, có `manifest.json` ngay gốc. Giải nén rồi **Load unpacked**; Chrome không nạp trực tiếp file ZIP. Khi cập nhật bản cũ, thay nội dung trong đúng thư mục đã nạp rồi bấm **Reload** tại `chrome://extensions/` để giữ ID/cài đặt.
+ZIP nằm tại `dist/ai-translate-extension-v2.6.1.zip`, có `manifest.json` ngay gốc. Giải nén rồi **Load unpacked**; Chrome không nạp trực tiếp file ZIP. Khi cập nhật bản cũ, thay nội dung trong đúng thư mục đã nạp rồi bấm **Reload** tại `chrome://extensions/` để giữ ID/cài đặt.
 
 Workflow `.github/workflows/release.yml` chạy test, đóng ZIP chỉ gồm file runtime và đính kèm checksum vào Release khi push tag `v*`. Test tự động dùng phản hồi API mô phỏng; xác nhận dịch thật cần API key của nhà cung cấp.
 
 ## 📝 Changelog
+
+### v2.6.1 (2026-09-29)
+- Thêm BAT khởi động VieNeu trên Windows: chuẩn bị Python 3.12, cài thư viện, giữ model/môi trường cho lần chạy sau và giữ cửa sổ thông báo lỗi.
+- Đóng gói BAT + PowerShell cùng ZIP helper; thêm kiểm tra Windows trước khi phát hành. Helper dùng được với extension v2.6.0.
 
 ### v2.6.0 (2026-09-29)
 - Dịch chữ trực tiếp trên trang bằng OpenAI/Gemini; tiến độ, Dừng và khôi phục Bản gốc.

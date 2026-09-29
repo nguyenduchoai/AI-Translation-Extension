@@ -10,7 +10,8 @@ import test from 'node:test';
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const required = ['LICENSE', 'companion/README.md', 'companion/model_cache.py',
   'companion/requirements.in', 'companion/requirements.txt', 'companion/server.py',
-  'companion/speech_engine.py', 'companion/start-vieneu.command'];
+  'companion/speech_engine.py', 'companion/start-vieneu.command',
+  'companion/start-vieneu.bat', 'companion/start-vieneu.ps1'];
 
 function fixture(t) {
   const directory = mkdtempSync(join(tmpdir(), 'companion-package-'));

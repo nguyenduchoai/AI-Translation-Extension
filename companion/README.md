@@ -2,6 +2,20 @@
 
 Dịch vụ này dùng **VieNeu v3 Turbo**, backend ONNX CPU **fp32**, phát PCM16 mono 48 kHz theo từng đoạn. Trình duyệt phát âm thanh; model chạy trong Python trên máy. Không gửi văn bản tới dịch vụ TTS bên ngoài. Lần khởi động đầu cần Internet để tải model từ Hugging Face. Sau khi tải đủ, model có thể chạy offline.
 
+## Khởi động trên Windows
+
+1. Tải **vieneu-local-v2.6.1.zip** từ [Releases](https://github.com/nguyenduchoai/AI-Translation-Extension/releases/tag/v2.6.1) và **Extract all / Giải nén toàn bộ** vào thư mục trên máy.
+2. Mở thư mục **companion** rồi nhấp đúp **start-vieneu.bat**. Giữ `start-vieneu.ps1` và các file Python cùng thư mục; không chỉ chép riêng BAT, không chạy bên trong ZIP.
+3. Lần đầu, BAT dùng `uv` để chuẩn bị Python 3.12 64-bit và cài thư viện. Nếu chưa có uv, bộ chạy gọi WinGet và có thể hỏi xác nhận cài đặt; nếu máy không có WinGet, làm theo đường dẫn cài uv hiện trong cửa sổ rồi mở BAT lại. Không cần tự kích hoạt virtualenv hay cài GPU/CUDA.
+4. Đợi **Application startup complete**. Trong extension chọn **Đọc tiếng Việt → VieNeu local → Kết nối → chọn giọng → Nghe thử**.
+5. Giữ cửa sổ mở khi dùng. Dừng bằng **Ctrl+C**; lần sau chỉ nhấp đúp BAT. Môi trường và model được giữ lại, chỉ cài thư viện lại khi danh sách yêu cầu thay đổi.
+
+Cần Windows 64-bit. Lần đầu cần Internet, tải khoảng 580 MiB model cùng Python/thư viện. BAT gọi PowerShell có sẵn trong Windows và chỉ áp dụng execution-policy cho tiến trình đó, không đổi cấu hình máy vĩnh viễn. Nếu chính sách công ty chặn script, cần quản trị viên cho phép theo quy định máy.
+
+Nếu có lỗi, cửa sổ BAT giữ mở: gửi nguyên phần lỗi cho người hỗ trợ. Không tự xóa model/cache. ZIP này dùng được với extension v2.6.0; không bắt buộc nâng cấp extension chỉ để chạy giọng Windows.
+
+`requirements.in` ghim thư viện trực tiếp; Windows tự chọn phụ thuộc phù hợp với nền tảng. `requirements.txt` là snapshot môi trường đã kiểm tra trên Mac. CI Windows kiểm tra BAT, lỗi cài đặt và chạy model thật; xem trạng thái workflow của bản phát hành.
+
 ## Khởi động trên macOS
 
 Có Python 3.12 hoặc [uv](https://docs.astral.sh/uv/getting-started/installation/). Mở Terminal tại thư mục mã nguồn rồi chạy:
