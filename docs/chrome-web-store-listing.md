@@ -15,7 +15,7 @@ Prepared from version 2.5.0 source, 29 September 2026. The package has been uplo
 
 Publisher identity and contact email must match the owner's actual account details; this document does not invent those values. The owner has confirmed non-trader (phi thương mại) status.
 
-Current preparation status: version 2.5.0 is uploaded as draft item `bikabhabjbgncdjlehogglgepofcjoge` under publisher `a9658b75-5c38-4483-af78-278258b08dae`. The owner confirmed non-trader status. Public contact validation and confirmation of saved account declarations remain pending. Publish the policy at the URL above and verify it is accessible before review submission. No review submission or approval is claimed here.
+Current Store status (29 September 2026): version 2.5.0 uploaded and submitted; Dashboard reports **Pending review / Đang chờ xem xét**. Item ID: `bikabhabjbgncdjlehogglgepofcjoge`. Publisher ID: `a9658b75-5c38-4483-af78-278258b08dae`. Owner confirmed non-trader and authorized `nguyenduchoai@gmail.com` as public contact. Approval/public availability is not yet confirmed. See `chrome-web-store-submission.md` for evidence.
 
 ## Short description
 

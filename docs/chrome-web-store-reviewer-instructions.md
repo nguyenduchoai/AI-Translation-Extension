@@ -41,9 +41,8 @@ This companion is optional; translation/OCR and compatible browser speech work i
 
 The local model does not run entirely inside the browser. This build does not capture microphones or meeting audio, translate Meet/Zoom calls, or send generated speech to other call participants.
 
-## Submission-specific items still needed
+## Submission status
 
-- Version 2.5.0 has been uploaded as draft item `bikabhabjbgncdjlehogglgepofcjoge` under publisher `a9658b75-5c38-4483-af78-278258b08dae`. The owner has confirmed non-trader status; public contact validation and confirmation of saved account declarations remain pending. Draft upload is not submission for review or approval.
-- If Google requires private test credentials, provide a dedicated review credential through the private dashboard field. A missing credential is not evidence that API translation was tested.
-- Confirm `https://github.com/nguyenduchoai/AI-Translation-Extension/blob/main/docs/privacy-policy.md` is public after publishing the document, and the screenshots depict the submitted build.
-- Record the exact submitted ZIP version/checksum and dashboard status separately; preparation is not submission or approval.
+Version 2.5.0 was submitted on 29 September 2026. The Dashboard shows **Pending review / Đang chờ xem xét** for item `bikabhabjbgncdjlehogglgepofcjoge`. The public privacy-policy URL returns HTTP 200, and the listing includes two actual UI screenshots plus a promotional tile. Publisher contact email is `nguyenduchoai@gmail.com`, authorized by the owner; non-trader status is confirmed.
+
+No review API credential was supplied. The private reviewer instructions explain bring-your-own-key setup and link to this document. If Google requests a dedicated credential, arrange it through the private dashboard fields. Submission does not establish review approval or live API translation validation.
