@@ -10,6 +10,6 @@ Tải **vieneu-local-v2.6.1.zip** bên dưới, giải nén toàn bộ, mở th�
 
 Helper này dùng được với extension **v2.6.0** đang cài. Extension **v2.6.1** chỉ cập nhật hướng dẫn/phiên bản; dịch trang, OCR, prompt và TTS giữ nguyên. Gói macOS vẫn có `start-vieneu.command`.
 
-Phát hành được chặn cho đến khi CI Windows vượt qua kiểm tra BAT, khởi động lại, lỗi cài đặt, đường dẫn Unicode/khoảng trắng và tạo PCM bằng model VieNeu thật. Kiểm tra model xác nhận tạo audio, không đánh giá chất lượng phát âm hay tốc độ trên máy người dùng. CI Linux tiếp tục chạy kiểm thử JavaScript và API Python.
+Đã kiểm tra trên Windows x64 của GitHub Actions: BAT khởi động, mở lại, lỗi cài đặt/thử lại và đường dẫn Unicode/khoảng trắng đều đạt. Model VieNeu thật trả 25 giọng và tạo 84.480 byte PCM 48 kHz cho câu thử. [Kết quả kiểm tra](https://github.com/nguyenduchoai/AI-Translation-Extension/actions/runs/36587076458). Kiểm tra model xác nhận tạo audio, không đánh giá chất lượng phát âm hay tốc độ trên máy người dùng. CI Linux tiếp tục chạy kiểm thử JavaScript và API Python.
 
 ZIP không chứa model, API key, cache hoặc môi trường Python. Các file `.sha256` dùng kiểm tra tải xuống. Hồ sơ Chrome Web Store v2.5.0 không bị thay đổi.

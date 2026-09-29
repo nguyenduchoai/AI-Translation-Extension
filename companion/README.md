@@ -14,7 +14,7 @@ Cần Windows 64-bit. Lần đầu cần Internet, tải khoảng 580 MiB model 
 
 Nếu có lỗi, cửa sổ BAT giữ mở: gửi nguyên phần lỗi cho người hỗ trợ. Không tự xóa model/cache. ZIP này dùng được với extension v2.6.0; không bắt buộc nâng cấp extension chỉ để chạy giọng Windows.
 
-`requirements.in` ghim thư viện trực tiếp; Windows tự chọn phụ thuộc phù hợp với nền tảng. `requirements.txt` là snapshot môi trường đã kiểm tra trên Mac. CI Windows kiểm tra BAT, lỗi cài đặt và chạy model thật; xem trạng thái workflow của bản phát hành.
+`requirements.in` ghim thư viện trực tiếp; Windows tự chọn phụ thuộc phù hợp với nền tảng. `requirements.txt` là snapshot môi trường đã kiểm tra trên Mac. Đã kiểm tra Windows x64 trên GitHub Actions ngày 2026-09-29: BAT, mở lại, lỗi cài đặt/thử lại, đường dẫn Unicode/khoảng trắng đều đạt; model thật trả 25 giọng và tạo 84.480 byte PCM 48 kHz. Chưa chấm chất lượng phát âm trên Windows. [Kết quả CI](https://github.com/nguyenduchoai/AI-Translation-Extension/actions/runs/36587076458).
 
 ## Khởi động trên macOS
 
