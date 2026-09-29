@@ -169,6 +169,24 @@
     .test-btn.testing .spinner { display: inline-block; }
     .test-btn.testing .btn-text { display: none; }
     @keyframes spin { to { transform: rotate(360deg); } }
+    .speech-panel { flex-shrink: 0; max-height: 58vh; overflow: auto; border-bottom: 1px solid #29243e; background: #11101c; }
+    .speech-panel summary { cursor: pointer; padding: 12px 16px; font-size: 13px; font-weight: 600; }
+    .speech-badge { color: #a78bfa; font-size: 10px; margin-left: 6px; }
+    .speech-content { padding: 0 16px 14px; }
+    .speech-auto, .speech-volume { display: flex; align-items: center; gap: 8px; font-size: 12px; margin: 8px 0 12px; }
+    .speech-row { display: flex; gap: 8px; margin: 8px 0; }
+    .speech-row label { flex: 1; min-width: 0; font-size: 11px; color: #bbb5cf; }
+    .speech-row select { margin-top: 5px; padding: 8px; font-size: 12px; }
+    .speech-help { font-size: 11px; color: #aba5bc; line-height: 1.5; margin: 8px 0; }
+    .speech-help a { color: #bfa4ff; }
+    .speech-content textarea { resize: vertical; min-height: 55px; max-height: 150px; }
+    #speech-status { font-size: 11px; color: #bba7f2; margin-top: 8px; line-height: 1.5; }
+    #speech-status[data-state="error"] { color: #ff9696; }
+    #speech-metrics { color: #86cfa9; font-size: 10px; margin-top: 4px; }
+    .ai-translator-speak-section { margin-left: auto; border: 0; border-radius: 5px; background: #28213b; color: white; cursor: pointer; padding: 4px 8px; }
+    .ai-translator-speak-section + .ai-translator-copy-section { margin-left: 0; }
+    button:disabled { opacity: 0.5; cursor: wait; }
+    [hidden] { display: none !important; }
   </style>
 </head>
 <body>
@@ -186,6 +204,37 @@
     </div>
   </div>
   
+  <details class="speech-panel" open>
+    <summary>🔊 Đọc tiếng Việt <span class="speech-badge">Thử nghiệm</span></summary>
+    <div class="speech-content">
+      <label class="speech-auto"><input type="checkbox" id="speech-auto"> Tự đọc từng câu khi AI dịch</label>
+      <div class="speech-row">
+        <label>Nguồn giọng
+          <select id="speech-engine" class="form-select">
+            <option value="vieneu">VieNeu local</option>
+            <option value="browser">Giọng trình duyệt</option>
+          </select>
+        </label>
+        <label>Giọng đọc<select id="speech-voice" class="form-select"><option value="">Giọng mặc định</option></select></label>
+      </div>
+      <p id="speech-local-help" class="speech-help">Mở ứng dụng VieNeu trên máy để tạo giọng. Âm thanh phát tại đây. <a href="https://github.com/nguyenduchoai/AI-Translation-Extension/blob/main/companion/README.md" target="_blank" rel="noopener">Cách khởi động</a></p>
+      <div class="speech-row">
+        <button id="speech-connect" class="test-btn">Kết nối</button>
+        <button id="speech-test" class="test-btn">Nghe thử</button>
+        <button id="speech-stop" class="test-btn">■ Dừng</button>
+      </div>
+      <label class="speech-volume">Âm lượng <input id="speech-volume" type="range" min="0" max="1" step="0.1" value="0.8"></label>
+      <label for="speech-text" class="form-label">Dán câu trả lời AI để nghe</label>
+      <textarea id="speech-text" class="form-input" rows="2" placeholder="Nhập hoặc dán nội dung tiếng Việt…"></textarea>
+      <div class="speech-row">
+        <button id="speech-read" class="save-btn">▶ Đọc nội dung</button>
+        <button id="speech-latest" class="test-btn">Đọc bản dịch mới nhất</button>
+      </div>
+      <div id="speech-status" role="status" aria-live="polite">Đang khởi tạo…</div>
+      <div id="speech-metrics"></div>
+    </div>
+  </details>
+
   <div class="ai-translator-result-body" id="result-body">
     <!-- Stream/History Content goes here -->
   </div>

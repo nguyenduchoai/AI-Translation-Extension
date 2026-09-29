@@ -1,5 +1,7 @@
 import { resolveProviderSettings, streamTranslation, testProviderConnection } from './lib/ai-provider.js';
 
+let activeCaptureId = 0;
+
 // Background service worker - handles screenshot capture, AI translation, streaming, OCR
 
 chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(console.error);
@@ -115,9 +117,12 @@ async function startCapture() {
 // ============================================================
 async function handleCaptureAndTranslate(message, tabId) {
   const { rect } = message;
+  const captureId = ++activeCaptureId;
 
   const safeSend = async (msg) => {
+    if (captureId !== activeCaptureId) return;
     try { await chrome.tabs.sendMessage(tabId, msg); } catch (e) {}
+    if (captureId !== activeCaptureId) return;
     try { await chrome.runtime.sendMessage(msg); } catch (e) {}
   };
 
@@ -148,7 +153,9 @@ async function handleCaptureAndTranslate(message, tabId) {
     await safeSend({
       action: 'showLoading',
       message: settings.ocrOnly ? '🔍 Đang trích xuất text...' : '🔄 Đang dịch...',
-      rect: rect
+      rect: rect,
+      ocrOnly: settings.ocrOnly,
+      targetLang: settings.targetLang
     });
 
     const result = await streamTranslation({

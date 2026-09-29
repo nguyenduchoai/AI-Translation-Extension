@@ -1,16 +1,20 @@
 import { setupSettings } from './settings.js';
+import { setupSpeechPanel } from './lib/speech-panel.js';
 
 let streamingEl = null;
+let speech = null;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
   await renderHistoryPanel();
   await setupSettings();
   setupButtons();
+  speech = await setupSpeechPanel();
 });
 
 // Listen for messages from background.js
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  speech?.handle(message);
   switch (message.action) {
     case 'showLoading':
       showLoadingIndicator(message.message);
@@ -28,8 +32,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
       sendResponse({ status: 'ok' });
       break;
+    default:
+      return false;
   }
-  return true;
+  return false;
 });
 
 function setupButtons() {
@@ -188,6 +194,9 @@ async function renderHistoryPanel(history = null) {
 }
 
 function bindCopySectionButtons(container) {
+  container.querySelectorAll('.ai-translator-speak-section').forEach(btn => {
+    btn.onclick = () => speech?.read(decodeURIComponent(btn.getAttribute('data-text')));
+  });
   container.querySelectorAll('.ai-translator-copy-section').forEach(btn => {
     btn.onclick = () => {
       const text = decodeURIComponent(btn.getAttribute('data-text'));
@@ -242,6 +251,7 @@ function formatTranslation(item) {
       <div class="ai-translator-section-header">
         <span class="ai-translator-section-icon">${icon}</span>
         <span>${label}</span>
+        <button class="ai-translator-speak-section" data-text="${encodeURIComponent(item.translation)}" title="Nghe đoạn này bằng giọng tiếng Việt">🔊</button>
         <button class="ai-translator-copy-section" data-text="${encodeURIComponent(item.translation)}" title="Copy">📋</button>
       </div>
       <div class="ai-translator-section-content ai-translator-translated">${escapeHtml(item.translation)}</div>

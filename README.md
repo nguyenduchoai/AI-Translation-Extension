@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-2.4.0-blueviolet?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/version-2.5.0-blueviolet?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/badge/manifest-v3-blue?style=for-the-badge" alt="Manifest V3">
   <img src="https://img.shields.io/badge/AI-OpenAI_+_Gemini-green?style=for-the-badge" alt="OpenAI">
   <img src="https://img.shields.io/badge/license-MIT-yellow?style=for-the-badge" alt="License">
@@ -18,7 +18,7 @@
 
 ---
 
-## ✨ Tính năng Nổi bật (v2.4.0)
+## ✨ Tính năng Nổi bật (v2.5.0)
 
 | Tính năng | Mô tả |
 |-----------|-------|
@@ -28,6 +28,7 @@
 | 🧪 **Thiết lập nhanh gọn** | Cài đặt API Key và model nằm gọn trong Bánh răng (⚙) của Side Panel |
 | 🤖 **Multi-Model** | OpenAI GPT-4o / GPT-4o-mini và Google Gemini; nhập mã model khác nếu cần |
 | 🦷 **Dịch nha khoa** | Prompt riêng cho nha khoa, chỉnh nha, implant, nội nha, nha chu, phục hình, phẫu thuật miệng và nha khoa trẻ em |
+| 🔊 **Đọc tiếng Việt** | Đọc từng câu AI trả về bằng VieNeu local hoặc giọng Việt có sẵn trong browser; có Dừng, Nghe lại, đo thời gian tới âm thanh đầu |
 | 🌍 **9 ngôn ngữ** | Việt, Anh, Trung, Nhật, Hàn, Pháp, Đức, Tây Ban Nha, Thái |
 | 💾 **Lưu lịch sử & Export**| Tự động lưu 50 bản dịch gần nhất, hỗ trợ tải về dưới dạng `.txt` |
 
@@ -56,7 +57,7 @@ git clone https://github.com/nguyenduchoai/AI-Translation-Extension.git
 
 ### Cách 2: Bằng file ZIP
 
-1. Tải file `ai-translate-extension-v2.4.0.zip` từ [Releases](https://github.com/nguyenduchoai/AI-Translation-Extension/releases/latest)
+1. Tải file `ai-translate-extension-v2.5.0.zip` từ [Releases](https://github.com/nguyenduchoai/AI-Translation-Extension/releases/latest)
 2. Giải nén vào một thư mục
 3. Load unpacked thư mục đó tương tự Cách 1.
 
@@ -93,6 +94,22 @@ Hoặc sử dụng chuột: **Chuột phải** trên trình duyệt → **🌐 C
 1. Mở Cài đặt trong Side Panel (⚙️) → Chọn **📝 Chỉ trích Text** → **💾 Lưu lại**
 2. Nhấn `Alt + Q` quét đoạn cần lấy $\Rightarrow$ extension sẽ gõ ra đúng hệt nguyên bản để bạn Copy.
 
+### Đọc câu trả lời AI bằng tiếng Việt (v2.5.0)
+
+**Đã triển khai TTS**, chưa có thu âm/nhận dạng/dịch cuộc họp Meet hoặc Zoom. VieNeu tạo giọng trong Python trên máy; extension nhận PCM streaming và phát trong trình duyệt. Không quảng cáo model VieNeu chạy hoàn toàn trong browser.
+
+1. Tải thêm **`vieneu-local-v2.5.0.zip`** trong [Releases](https://github.com/nguyenduchoai/AI-Translation-Extension/releases/latest), giải nén và mở **`start-vieneu.command`** trên macOS. Cần Python 3.12 hoặc `uv`; xem [hướng dẫn VieNeu local](companion/README.md). Lần đầu tải khoảng 580 MiB model, ngoài các thư viện Python.
+2. Đợi ứng dụng VieNeu báo sẵn sàng. Trong extension, mở **🔊 Đọc tiếng Việt → VieNeu local → Kết nối**.
+3. Chọn giọng và **Nghe thử**. Có thể dán bất kỳ câu trả lời AI bằng tiếng Việt vào ô văn bản rồi bấm **Đọc nội dung**, không cần API key dịch.
+4. Bật **Tự đọc từng câu khi AI dịch** rồi chụp/dịch ảnh như trước. Câu hoàn chỉnh được gửi tới VieNeu ngay khi AI trả chữ, không đợi hết bài.
+5. **Dừng** hủy lượt tạo giọng và hàng đợi; nút 🔊 cạnh mỗi đoạn cho phép nghe lại. Giữ side panel mở để duy trì phát. Bật tự đọc là lựa chọn trong phiên, không tự bật lại khi mở panel.
+
+Tự đọc áp dụng cho bản dịch đích tiếng Việt; OCR và ngôn ngữ đích khác không tự đọc. Có giới hạn hàng đợi để tránh đọc trễ quá lâu; lỗi sẽ hiện rõ, không âm thầm bỏ câu. Số thập phân và các chữ viết tắt phổ biến được giữ trong cùng đoạn.
+
+**Giọng trình duyệt** là lựa chọn không cần VieNeu local nếu máy đã có giọng `vi-VN`; danh sách phụ thuộc hệ điều hành/browser. Đã thử giọng Linh trên máy Mac này. Đây không phải VieNeu và không phải edge-tts. Extension không tự đổi nhà cung cấp giọng khi xảy ra lỗi.
+
+Số đo **Âm thanh đầu** trong panel tính từ lúc gửi một câu đến lúc sẵn sàng phát đoạn âm thanh đầu, không bao gồm thời gian AI dịch và không phải phép đo âm thanh vật lý ở loa. Tốc độ phụ thuộc giọng, văn bản, máy và trạng thái model. Chưa có suy luận VieNeu hoàn toàn trong browser.
+
 ### Phím tắt mặc định
 
 | Phím | Chức năng |
@@ -123,14 +140,21 @@ Yêu cầu Node.js 20+ và Python 3; không cần cài thư viện ngoài.
 npm test
 npm run package
 # Hoặc kiểm tra phiên bản tag trước khi phát hành:
-python3 scripts/package-extension.py --tag v2.4.0
+python3 scripts/package-extension.py --tag v2.5.0
 ```
 
-ZIP nằm tại `dist/ai-translate-extension-v2.4.0.zip`, có `manifest.json` ngay gốc. Giải nén rồi **Load unpacked**; Chrome không nạp trực tiếp file ZIP. Khi cập nhật bản cũ, thay nội dung trong đúng thư mục đã nạp rồi bấm **Reload** tại `chrome://extensions/` để giữ ID/cài đặt.
+ZIP nằm tại `dist/ai-translate-extension-v2.5.0.zip`, có `manifest.json` ngay gốc. Giải nén rồi **Load unpacked**; Chrome không nạp trực tiếp file ZIP. Khi cập nhật bản cũ, thay nội dung trong đúng thư mục đã nạp rồi bấm **Reload** tại `chrome://extensions/` để giữ ID/cài đặt.
 
 Workflow `.github/workflows/release.yml` chạy test, đóng ZIP chỉ gồm file runtime và đính kèm checksum vào Release khi push tag `v*`. Test tự động dùng phản hồi API mô phỏng; xác nhận dịch thật cần API key của nhà cung cấp.
 
 ## 📝 Changelog
+
+### v2.5.0 (2026-09-29)
+- Thêm giọng đọc VieNeu local: nhận PCM streaming, phát từng câu AI trả về, dán văn bản để nghe, nghe lại từng đoạn, Dừng/hủy và điều chỉnh âm lượng.
+- Thêm giọng tiếng Việt của trình duyệt khi máy có sẵn.
+- Tách bộ khởi động VieNeu local thành ZIP riêng; không đóng model, cache hoặc môi trường Python vào extension.
+- Kiểm tra thật trên M2 Pro: mẫu nha khoa 6,08 giây audio, byte đầu 0,347 giây, tạo xong 1,875 giây khi model đã nóng. Các số đo không xác nhận chất lượng lâm sàng/phát âm.
+- Chưa tích hợp thu âm hay phiên dịch Meet/Zoom; TTS là bước đã hoàn thành.
 
 ### v2.4.0 (2026-09-29)
 - Thêm Google Gemini cho dịch ảnh, OCR và streaming; key/model riêng cho từng nhà cung cấp.
