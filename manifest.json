@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "AI Screen Translator",
-  "version": "2.5.0",
-  "description": "Chụp vùng màn hình, dịch nha khoa bằng OpenAI hoặc Gemini. Hỗ trợ dịch chuyên ngành, streaming và trích xuất văn bản OCR.",
+  "version": "2.6.0",
+  "description": "Dịch trang web, chụp vùng/OCR với OpenAI hoặc Gemini. Prompt nha khoa và mẫu tùy chỉnh; đọc tiếng Việt bằng TTS.",
   "permissions": [
     "activeTab",
     "storage",

@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-2.5.0-blueviolet?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/version-2.6.0-blueviolet?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/badge/manifest-v3-blue?style=for-the-badge" alt="Manifest V3">
   <img src="https://img.shields.io/badge/AI-OpenAI_+_Gemini-green?style=for-the-badge" alt="OpenAI">
   <img src="https://img.shields.io/badge/license-MIT-yellow?style=for-the-badge" alt="License">
@@ -18,10 +18,12 @@
 
 ---
 
-## ✨ Tính năng Nổi bật (v2.5.0)
+## ✨ Tính năng Nổi bật (v2.6.0)
 
 | Tính năng | Mô tả |
 |-----------|-------|
+| 🌐 **Dịch trang web** | Thay chữ ngay trên trang, giữ liên kết/định dạng; có tiến độ, Dừng và Bản gốc |
+| 🧩 **Mẫu prompt** | Chọn mẫu sát nghĩa, tự nhiên, học thuật hoặc tạo/sửa/xóa mẫu riêng; OCR có mẫu độc lập |
 | 🖥️ **Chrome Side Panel** | Dịch thuật theo cơ chế Split-screen nguyên bản trình duyệt, không làm vỡ giao diện web |
 | ⚡ **Streaming Response** | Text tiếng Việt hiện real-time từng chữ giống hệt ChatGPT |
 | 📝 **OCR Mode** | Trích xuất văn bản từ hình ảnh/truyện tranh — copy text từ PDF bị khóa |
@@ -57,7 +59,7 @@ git clone https://github.com/nguyenduchoai/AI-Translation-Extension.git
 
 ### Cách 2: Bằng file ZIP
 
-1. Tải file `ai-translate-extension-v2.5.0.zip` từ [Releases](https://github.com/nguyenduchoai/AI-Translation-Extension/releases/latest)
+1. Tải file `ai-translate-extension-v2.6.0.zip` từ [Releases](https://github.com/nguyenduchoai/AI-Translation-Extension/releases/latest)
 2. Giải nén vào một thư mục
 3. Load unpacked thư mục đó tương tự Cách 1.
 
@@ -71,7 +73,7 @@ git clone https://github.com/nguyenduchoai/AI-Translation-Extension.git
 6. Chọn **Dịch thuật → Nha khoa** hoặc phân ngành phù hợp, ngôn ngữ đích **Tiếng Việt**.
 7. Click **🧪 Test Server**, rồi **💾 Lưu lại**. Test có gửi một yêu cầu nhỏ tới API; quota/chi phí theo tài khoản nhà cung cấp.
 
-API key và model của hai nhà cung cấp được lưu riêng. Bản nâng cấp giữ lại cài đặt OpenAI cũ. Cài đặt dùng `chrome.storage.sync` và có thể đồng bộ qua Chrome; lịch sử ảnh/bản dịch nằm trong `chrome.storage.local`. Chỉ vùng ảnh đã chọn được gửi tới nhà cung cấp AI đã chọn.
+API key và model của hai nhà cung cấp được lưu riêng. Bản nâng cấp giữ lại cài đặt OpenAI cũ. Cài đặt dùng `chrome.storage.sync` và có thể đồng bộ qua Chrome; lịch sử ảnh/bản dịch nằm trong `chrome.storage.local`. Khi chụp vùng, chỉ ảnh đã cắt được gửi tới AI. Khi bấm **Dịch trang**, phần chữ phù hợp đã tải của trang được gửi theo từng đợt. Mẫu prompt và bản nháp được lưu cục bộ. Xem [chính sách riêng tư v2.6.0](docs/privacy-policy-v2.6.0.md).
 
 ### Prompt nha khoa
 
@@ -80,6 +82,24 @@ Prompt giữ cấu trúc, thuật ngữ chuyên ngành, số răng/hệ đánh s
 Triển khai Gemini dựa trên [GenerateContent/streamGenerateContent](https://ai.google.dev/api/generate-content), [Gemini 3.8 Flash](https://ai.google.dev/gemini-api/docs/models/gemini-3.8-flash) và [Gemini 3.5 Flash-Lite](https://ai.google.dev/gemini-api/docs/models/gemini-3.5-flash-lite). Quyền truy cập model phụ thuộc tài khoản API.
 
 ## 🎯 Cách sử dụng
+
+### Dịch trang web
+
+1. Mở trang cần dịch → mở side panel → **⚙️** chọn nhà cung cấp, ngôn ngữ, chuyên ngành và lưu cấu hình.
+2. Bấm **Dịch trang**. Chữ được thay ngay trong trang theo từng đợt; liên kết và các phần tử hiện có được giữ lại.
+3. **Dừng** ngắt xử lý tiếp, giữ phần đã dịch. **Bản gốc** khôi phục phần chữ extension đã thay. Nội dung website tự cập nhật được giữ nguyên.
+4. Muốn đổi ngôn ngữ/mẫu, lưu cấu hình rồi bấm **Dịch trang** lại. Trang sẽ được khôi phục trước khi dịch lại.
+
+Chỉ xử lý chữ đã tải trong trang chính; không dịch ảnh, PDF viewer, iframe, shadow DOM, ô nhập liệu, biểu mẫu hoặc vùng soạn thảo. Nội dung tải thêm cần bấm dịch lại. Mỗi lượt tối đa 600 đoạn/60.000 ký tự; đoạn đơn trên 4.000 ký tự được bỏ qua và có thông báo giới hạn. Dịch trang gửi chữ tới AI anh/chị đã chọn, có thể phát sinh chi phí theo API. Không tự đọc toàn bộ trang bằng TTS; chức năng tự đọc vẫn áp dụng luồng dịch ảnh trong panel.
+
+### Chọn và sửa mẫu prompt
+
+Trong **⚙️ → Mẫu prompt**, chọn **Dịch ảnh / trang web** hoặc **Chỉ trích text / OCR**. Mỗi loại giữ mẫu được chọn riêng; dịch trang luôn dùng mẫu dịch kể cả khi chế độ chụp đang là OCR.
+
+- Chọn mẫu có sẵn để áp dụng cho lượt tiếp theo: sát nghĩa theo chuyên ngành, tự nhiên, học thuật, OCR nguyên văn hoặc OCR giữ bố cục.
+- Sửa tên/chỉ dẫn rồi **Lưu thành mẫu mới**. Với mẫu riêng, dùng **Lưu thay đổi**, **Xóa mẫu** hoặc **Bỏ sửa**.
+- Có thể dùng `{{targetLanguage}}` và `{{specialty}}` trong chỉ dẫn mẫu dịch. Chỉ dẫn bổ sung cách diễn đạt; vẫn giữ dữ kiện gốc và không biến OCR thành dịch thuật.
+- Mẫu và bản nháp lưu trên máy, tối đa 20 mẫu riêng/4.000 ký tự mỗi mẫu. Đóng/mở panel giữ bản sửa chưa lưu; chỉ **Lưu** mới áp dụng. Chọn/lưu mẫu không cần nhập API key.
 
 ### Dịch thuật nhanh
 
@@ -98,7 +118,7 @@ Hoặc sử dụng chuột: **Chuột phải** trên trình duyệt → **🌐 C
 
 **Đã triển khai TTS**, chưa có thu âm/nhận dạng/dịch cuộc họp Meet hoặc Zoom. VieNeu tạo giọng trong Python trên máy; extension nhận PCM streaming và phát trong trình duyệt. Không quảng cáo model VieNeu chạy hoàn toàn trong browser.
 
-1. Tải thêm **`vieneu-local-v2.5.0.zip`** trong [Releases](https://github.com/nguyenduchoai/AI-Translation-Extension/releases/latest), giải nén và mở **`start-vieneu.command`** trên macOS. Cần Python 3.12 hoặc `uv`; xem [hướng dẫn VieNeu local](companion/README.md). Lần đầu tải khoảng 580 MiB model, ngoài các thư viện Python.
+1. Tải thêm **`vieneu-local-v2.6.0.zip`** trong [Releases](https://github.com/nguyenduchoai/AI-Translation-Extension/releases/latest), giải nén và mở **`start-vieneu.command`** trên macOS. Cần Python 3.12 hoặc `uv`; xem [hướng dẫn VieNeu local](companion/README.md). Lần đầu tải khoảng 580 MiB model, ngoài các thư viện Python.
 2. Đợi ứng dụng VieNeu báo sẵn sàng. Trong extension, mở **🔊 Đọc tiếng Việt → VieNeu local → Kết nối**.
 3. Chọn giọng và **Nghe thử**. Có thể dán bất kỳ câu trả lời AI bằng tiếng Việt vào ô văn bản rồi bấm **Đọc nội dung**, không cần API key dịch.
 4. Bật **Tự đọc từng câu khi AI dịch** rồi chụp/dịch ảnh như trước. Câu hoàn chỉnh được gửi tới VieNeu ngay khi AI trả chữ, không đợi hết bài.
@@ -140,14 +160,20 @@ Yêu cầu Node.js 20+ và Python 3; không cần cài thư viện ngoài.
 npm test
 npm run package
 # Hoặc kiểm tra phiên bản tag trước khi phát hành:
-python3 scripts/package-extension.py --tag v2.5.0
+python3 scripts/package-extension.py --tag v2.6.0
 ```
 
-ZIP nằm tại `dist/ai-translate-extension-v2.5.0.zip`, có `manifest.json` ngay gốc. Giải nén rồi **Load unpacked**; Chrome không nạp trực tiếp file ZIP. Khi cập nhật bản cũ, thay nội dung trong đúng thư mục đã nạp rồi bấm **Reload** tại `chrome://extensions/` để giữ ID/cài đặt.
+ZIP nằm tại `dist/ai-translate-extension-v2.6.0.zip`, có `manifest.json` ngay gốc. Giải nén rồi **Load unpacked**; Chrome không nạp trực tiếp file ZIP. Khi cập nhật bản cũ, thay nội dung trong đúng thư mục đã nạp rồi bấm **Reload** tại `chrome://extensions/` để giữ ID/cài đặt.
 
 Workflow `.github/workflows/release.yml` chạy test, đóng ZIP chỉ gồm file runtime và đính kèm checksum vào Release khi push tag `v*`. Test tự động dùng phản hồi API mô phỏng; xác nhận dịch thật cần API key của nhà cung cấp.
 
 ## 📝 Changelog
+
+### v2.6.0 (2026-09-29)
+- Dịch chữ trực tiếp trên trang bằng OpenAI/Gemini; tiến độ, Dừng và khôi phục Bản gốc.
+- Bỏ qua biểu mẫu/vùng soạn thảo; bảo toàn nội dung website tự cập nhật và chặn phản hồi cũ sau khi hủy/chuyển trang.
+- Mẫu dịch/OCR độc lập; chọn mẫu có sẵn hoặc tạo, chỉnh sửa, xóa mẫu riêng; giữ bản nháp khi đóng panel.
+- Bản 2.5.0 đã gửi Chrome Web Store vẫn giữ nguyên trong lúc chờ xét duyệt; bản 2.6.0 phát hành ZIP riêng.
 
 ### v2.5.0 (2026-09-29)
 - Thêm giọng đọc VieNeu local: nhận PCM streaming, phát từng câu AI trả về, dán văn bản để nghe, nghe lại từng đoạn, Dừng/hủy và điều chỉnh âm lượng.

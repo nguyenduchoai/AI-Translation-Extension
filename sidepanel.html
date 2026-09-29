@@ -169,7 +169,15 @@
     .test-btn.testing .spinner { display: inline-block; }
     .test-btn.testing .btn-text { display: none; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .speech-panel { flex-shrink: 0; max-height: 58vh; overflow: auto; border-bottom: 1px solid #29243e; background: #11101c; }
+    .page-panel { flex-shrink: 0; padding: 12px 16px; border-bottom: 1px solid #29243e; background: #131021; }
+    .page-panel h2 { font-size: 13px; margin: 0 0 8px; }
+    .page-actions { display: flex; gap: 6px; }
+    .page-actions button { flex: 1; padding: 8px 4px; font-size: 12px; }
+    .page-help, #page-status, #page-count { font-size: 11px; line-height: 1.5; color: #b7aec9; margin: 7px 0 0; }
+    #page-status[data-state="error"] { color: #ff9696; }
+    #page-progress { width: 100%; height: 5px; accent-color: #a78bfa; margin-top: 8px; }
+    button:disabled { opacity: .45; cursor: default; }
+    .speech-panel { flex-shrink: 0; max-height: 48vh; overflow: auto; border-bottom: 1px solid #29243e; background: #11101c; }
     .speech-panel summary { cursor: pointer; padding: 12px 16px; font-size: 13px; font-weight: 600; }
     .speech-badge { color: #a78bfa; font-size: 10px; margin-left: 6px; }
     .speech-content { padding: 0 16px 14px; }
@@ -204,7 +212,20 @@
     </div>
   </div>
   
-  <details class="speech-panel" open>
+  <section class="page-panel" aria-labelledby="page-heading">
+    <h2 id="page-heading">🌐 Dịch trang web</h2>
+    <div class="page-actions">
+      <button id="page-start" class="save-btn">Dịch trang</button>
+      <button id="page-stop" class="test-btn" disabled>Dừng</button>
+      <button id="page-restore" class="test-btn">Bản gốc</button>
+    </div>
+    <p class="page-help">Bấm Dịch trang sẽ gửi phần chữ đã tải của trang tới AI đã chọn và thay chữ ngay trên trang. Bỏ qua ô nhập liệu. Chọn ngôn ngữ và mẫu prompt trong ⚙️.</p>
+    <progress id="page-progress" max="1" value="0" hidden aria-label="Tiến độ dịch trang"></progress>
+    <div id="page-count"></div>
+    <div id="page-status" role="status" aria-live="polite">Chọn mẫu prompt trong Cài đặt rồi bấm Dịch trang.</div>
+  </section>
+
+  <details class="speech-panel">
     <summary>🔊 Đọc tiếng Việt <span class="speech-badge">Thử nghiệm</span></summary>
     <div class="speech-content">
       <label class="speech-auto"><input type="checkbox" id="speech-auto"> Tự đọc từng câu khi AI dịch</label>

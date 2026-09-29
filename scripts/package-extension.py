@@ -15,6 +15,7 @@ REQUIRED_FILES = (
     "background.js",
     "content.css",
     "content.js",
+    "page-content.js",
     "guide.html",
     "manifest.json",
     "sidepanel.html",

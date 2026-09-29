@@ -1,6 +1,9 @@
 import { resolveProviderSettings, streamTranslation, testProviderConnection } from './lib/ai-provider.js';
+import { loadPromptSettings } from './lib/prompt-templates.js';
+import { createPageController } from './lib/page-controller.js';
 
 let activeCaptureId = 0;
+const pageController = createPageController();
 
 // Background service worker - handles screenshot capture, AI translation, streaming, OCR
 
@@ -16,6 +19,12 @@ chrome.commands.onCommand.addListener(async (command) => {
 
 // Listen for messages from popup/content scripts
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (['pageStart', 'pageCancel', 'pageRestore', 'pageGetState'].includes(message.action)) {
+    // Only our panel can initiate API work; page scripts cannot trigger translations.
+    if (sender.url !== chrome.runtime.getURL('sidepanel.html')) return false;
+    pageController.handle(message).then(sendResponse).catch(error => sendResponse({ error: error.message }));
+    return true;
+  }
   console.log('[AI Translator] Message received:', message.action);
 
   if (message.action === 'startCapture') {
@@ -160,6 +169,7 @@ async function handleCaptureAndTranslate(message, tabId) {
 
     const result = await streamTranslation({
       ...providerSettings,
+      ...await loadPromptSettings(settings.ocrOnly),
       imageBase64: croppedBase64,
       targetLang: settings.targetLang,
       ocrOnly: settings.ocrOnly,

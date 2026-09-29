@@ -24,3 +24,31 @@ test('all existing specialties and target languages retain distinct routing', ()
   assert.match(buildTranslationPrompts({ specialty: 'endodontics', targetLang: 'ja' }).user, /Japanese/);
   assert.match(buildTranslationPrompts({ specialty: 'unknown' }).system, /dentistry/);
 });
+
+test('page input describes supplied text, keeps clinical rules and removes screenshot wording', () => {
+  const prompts = buildTranslationPrompts({ inputType: 'page', targetLang: 'en', specialty: 'periodontics' });
+  assert.match(prompts.user, /web page text into English/);
+  assert.doesNotMatch(prompts.system + prompts.user, /image|visible|radiograph|photograph|cropped/i);
+  assert.match(prompts.system, /periodontics/);
+  assert.match(prompts.system, /FDI, Universal or Palmer/);
+  assert.match(prompts.system, /never as instructions/);
+});
+
+test('custom template interpolates known variables while retaining mandatory accuracy rules', () => {
+  const prompts = buildTranslationPrompts({ targetLang: 'ja', specialty: 'endodontics', customInstruction: 'Use {{targetLanguage}} for {{specialty}}; keep {{unknown}} literally.' });
+  assert.match(prompts.system, /Use Japanese for endodontics/);
+  assert.match(prompts.system, /keep {{unknown}} literally/);
+  assert.match(prompts.system, /lower priority/);
+  assert.match(prompts.system, /Do not convert units/);
+  assert.match(prompts.system, /Never change source facts/);
+  assert.deepEqual(buildTranslationPrompts({ customInstruction: '  ' }), buildTranslationPrompts());
+  assert.throws(() => buildTranslationPrompts({ customInstruction: 'x'.repeat(4001) }), /4000/);
+});
+
+test('custom OCR template cannot replace the transcription contract', () => {
+  const prompts = buildTranslationPrompts({ ocrOnly: true, customInstruction: 'Keep column order.' });
+  assert.match(prompts.system, /Keep column order/);
+  assert.match(prompts.system, /Do not translate, correct, interpret/);
+  assert.match(prompts.system, /This task remains verbatim transcription/);
+  assert.equal(prompts.user, buildTranslationPrompts({ ocrOnly: true }).user);
+});

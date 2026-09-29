@@ -1,5 +1,6 @@
 import { setupSettings } from './settings.js';
 import { setupSpeechPanel } from './lib/speech-panel.js';
+import { setupPagePanel } from './lib/page-panel.js';
 
 let streamingEl = null;
 let speech = null;
@@ -9,6 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   await renderHistoryPanel();
   await setupSettings();
   setupButtons();
+  setupPagePanel();
   speech = await setupSpeechPanel();
 });
 

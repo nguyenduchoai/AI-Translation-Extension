@@ -1,3 +1,5 @@
+import { setupPromptTemplateEditor } from './lib/prompt-template-editor.js';
+
 const PROVIDERS = {
   openai: {
     name: 'OpenAI', key: 'apiKey', model: 'model', defaultModel: 'gpt-4o',
@@ -24,6 +26,7 @@ export async function setupSettings() {
   const saveBtn = byId('saveBtn');
   const testBtn = byId('testBtn');
   const status = byId('status');
+  const promptEditor = setupPromptTemplateEditor(panel, saveBtn.closest('.btn-row'));
   let provider = 'openai';
   let ocrOnly = false;
   const drafts = { openai: {}, gemini: {} };
@@ -137,7 +140,8 @@ export async function setupSettings() {
         values[config.model] = drafts[name].model || config.defaultModel;
       }
       await chrome.storage.sync.set(values);
-      showStatus('success', `Đã lưu ${PROVIDERS[provider].name} · ${selectedModel()}`);
+      const editor = await promptEditor;
+      showStatus('success', `Đã lưu ${PROVIDERS[provider].name} · ${selectedModel()}${editor.hasUnsavedChanges() ? ' · Mẫu prompt đang sửa chưa áp dụng; hãy lưu ở phần Mẫu prompt.' : ''}`);
     } catch (error) {
       showStatus('error', `Không lưu được: ${error.message}`);
     }

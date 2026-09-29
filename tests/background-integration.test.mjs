@@ -38,7 +38,8 @@ async function backgroundHarness(t, settings, apiResponse) {
         messages.push({ destination: 'tab', ...message });
       }
     },
-    storage: { sync: { get: async defaults => ({ ...defaults, ...settings }) } }
+    storage: { sync: { get: async defaults => ({ ...defaults, ...settings }) },
+      local: { get: async defaults => defaults } }
   };
   globalThis.createImageBitmap = async () => ({ width: 1600, height: 1200 });
   globalThis.OffscreenCanvas = class {

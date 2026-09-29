@@ -262,12 +262,12 @@
       <span class="hero-icon">🌐</span>
       <h1>AI Screen Translator</h1>
       <p>Hướng dẫn cài đặt & sử dụng</p>
-      <div class="badge">v2.0 — Streaming • OCR • Multi-Model</div>
+      <div class="badge">v2.6 — Dịch trang • OCR • Mẫu prompt</div>
     </div>
 
     <!-- What's New -->
     <div class="quick-start">
-      <h3>🆕 Tính năng mới v2.0</h3>
+      <h3>🆕 Dịch ảnh, trang web và đọc tiếng Việt</h3>
       <div class="feature-grid">
         <div class="feature-card">
           <span class="feat-icon">⚡</span>
@@ -293,9 +293,18 @@
     </div>
 
     <div class="quick-start">
+      <h3>🌐 Dịch trang web và mẫu prompt</h3>
+      <ol>
+        <li>Mở trang web → side panel → ⚙️ chọn AI, ngôn ngữ, chuyên ngành và lưu.</li>
+        <li>Bấm <strong>Dịch trang</strong> để thay chữ ngay trên trang. <strong>Dừng</strong> ngắt xử lý, <strong>Bản gốc</strong> khôi phục phần chữ đã thay.</li>
+        <li>Trong ⚙️ → <strong>Mẫu prompt</strong>, chọn mẫu dịch hoặc OCR riêng. Sửa tên/chỉ dẫn → <strong>Lưu thành mẫu mới</strong>; mẫu riêng có thể lưu thay đổi hoặc xóa.</li>
+        <li>Bản sửa chưa lưu được giữ khi đóng panel; bấm Lưu để áp dụng hoặc Bỏ sửa để khôi phục mẫu đã lưu.</li>
+      </ol>
+      <p>Dịch trang gửi chữ đã tải tới AI đã chọn; tối đa 600 đoạn/60.000 ký tự, bỏ qua đoạn trên 4.000 ký tự. Không xử lý ảnh, PDF viewer, iframe, shadow DOM, biểu mẫu hoặc vùng soạn thảo; nội dung tải thêm cần dịch lại. TTS không tự đọc toàn bộ trang.</p>
+      <p>Mẫu chỉ bổ sung cách diễn đạt, giữ dữ kiện gốc; OCR vẫn không dịch. Có thể dùng {{targetLanguage}} và {{specialty}} trong mẫu dịch.</p>
       <h3>🔊 Đọc tiếng Việt bằng VieNeu</h3>
       <ol>
-        <li>Tải ZIP <strong>vieneu-local-v2.5.0.zip</strong> từ <a href="https://github.com/nguyenduchoai/AI-Translation-Extension/releases/latest">Releases</a>, giải nén và mở <strong>companion/start-vieneu.command</strong> trên Mac.</li>
+        <li>Tải ZIP <strong>vieneu-local-v2.6.0.zip</strong> từ <a href="https://github.com/nguyenduchoai/AI-Translation-Extension/releases/latest">Releases</a>, giải nén và mở <strong>companion/start-vieneu.command</strong> trên Mac.</li>
         <li>Đợi tải model xong, mở extension → <strong>Đọc tiếng Việt → VieNeu local → Kết nối</strong>.</li>
         <li>Chọn giọng, bấm <strong>Nghe thử</strong>. Có thể dán câu trả lời AI để nghe hoặc bật <strong>Tự đọc từng câu khi AI dịch</strong>.</li>
         <li><strong>Dừng</strong> hủy phát và hàng đợi. Giữ panel mở khi nghe.</li>
@@ -467,7 +476,7 @@
     </div>
 
     <div class="footer">
-      <p>AI Screen Translator v2.5.0 • OpenAI / Google Gemini</p>
+      <p>AI Screen Translator v2.6.0 • OpenAI / Google Gemini</p>
       <p style="margin-top:4px">Made with ❤️ for Vietnamese readers</p>
     </div>
   </div>

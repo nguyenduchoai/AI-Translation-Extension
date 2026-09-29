@@ -26,7 +26,7 @@ function fixture(t) {
   };
   writeFileSync(join(directory, 'manifest.json'), JSON.stringify(manifest));
   for (const file of [
-    'LICENSE', 'background.js', 'content.css', 'content.js', 'guide.html',
+    'LICENSE', 'background.js', 'content.css', 'content.js', 'page-content.js', 'guide.html',
     'sidepanel.html', 'sidepanel.js', 'settings.js', 'lib/providers.js',
     'icons/icon16.png', '.env', '.git/config', 'screenshots/private.png',
     'tests/example.test.mjs', 'lib/credentials.json', 'README.md',
@@ -51,7 +51,7 @@ test('ZIP contains only runtime files at its root, with a valid checksum and rep
   ], { encoding: 'utf8' }));
   assert.deepEqual(contents, [
     'LICENSE', 'background.js', 'content.css', 'content.js', 'guide.html',
-    'icons/icon16.png', 'lib/providers.js', 'manifest.json', 'settings.js',
+    'icons/icon16.png', 'lib/providers.js', 'manifest.json', 'page-content.js', 'settings.js',
     'sidepanel.html', 'sidepanel.js',
   ]);
   const first = readFileSync(archive);
