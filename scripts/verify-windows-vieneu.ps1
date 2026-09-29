@@ -18,7 +18,10 @@ try {
         Start-Sleep -Seconds 5
     }
     if (-not $ready) { throw 'Actual VieNeu model did not become ready within 10 minutes.' }
-    $voices = Invoke-RestMethod 'http://127.0.0.1:8001/voices' -Headers $headers -TimeoutSec 10
+    # PowerShell 5.1 may decode charset-less JSON as Latin-1. Voice IDs contain
+    # Vietnamese accents; decode the response bytes explicitly, like browser fetch.
+    $voiceResponse = Invoke-WebRequest 'http://127.0.0.1:8001/voices' -Headers $headers -UseBasicParsing -TimeoutSec 10
+    $voices = [Text.Encoding]::UTF8.GetString($voiceResponse.RawContentStream.ToArray()) | ConvertFrom-Json
     if ($voices.voices.Count -lt 1) { throw 'No preset voices returned.' }
     # UTF-8 JSON avoids Windows PowerShell 5.1 request-body encoding ambiguity.
     $body = @{ text = ('Xin ch' + [char]0x00E0 + 'o.'); voice = $voices.voices[0].id } | ConvertTo-Json -Compress
