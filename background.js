@@ -1,3 +1,5 @@
+import { resolveProviderSettings, streamTranslation, testProviderConnection } from './lib/ai-provider.js';
+
 // Background service worker - handles screenshot capture, AI translation, streaming, OCR
 
 chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(console.error);
@@ -35,7 +37,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message.action === 'testConnection') {
-    testApiKey(message.apiKey, message.model)
+    testProviderConnection({ provider: message.provider, apiKey: message.apiKey, model: message.model })
       .then(result => sendResponse(result))
       .catch(err => sendResponse({ success: false, error: err.message }));
     return true;
@@ -109,45 +111,6 @@ async function startCapture() {
 }
 
 // ============================================================
-// Test API Key
-// ============================================================
-async function testApiKey(apiKey, model) {
-  if (!apiKey) throw new Error('API Key trống');
-
-  const url = 'https://api.openai.com/v1/chat/completions';
-  const body = {
-    model: model || 'gpt-4o-mini',
-    messages: [{ role: 'user', content: 'Say "OK" in one word.' }],
-    max_tokens: 5
-  };
-
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`
-    },
-    body: JSON.stringify(body)
-  });
-
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
-    const code = response.status;
-    if (code === 401) throw new Error('API Key không hợp lệ');
-    if (code === 429) throw new Error('Hết quota hoặc rate limit');
-    if (code === 403) throw new Error('Key bị vô hiệu hóa');
-    throw new Error(err.error?.message || `Lỗi HTTP ${code}`);
-  }
-
-  const data = await response.json();
-  return {
-    success: true,
-    model: data.model,
-    message: `✅ Kết nối thành công! Model: ${data.model}`
-  };
-}
-
-// ============================================================
 // Capture & Translate
 // ============================================================
 async function handleCaptureAndTranslate(message, tabId) {
@@ -155,7 +118,7 @@ async function handleCaptureAndTranslate(message, tabId) {
 
   const safeSend = async (msg) => {
     try { await chrome.tabs.sendMessage(tabId, msg); } catch (e) {}
-    try { chrome.runtime.sendMessage(msg); } catch (e) {}
+    try { await chrome.runtime.sendMessage(msg); } catch (e) {}
   };
 
   try {
@@ -163,17 +126,21 @@ async function handleCaptureAndTranslate(message, tabId) {
     const croppedBase64 = await cropImage(dataUrl, rect);
 
     const settings = await chrome.storage.sync.get({
+      provider: 'openai',
       apiKey: '',
+      geminiApiKey: '',
+      geminiModel: 'gemini-3.8-flash',
       targetLang: 'vi',
       model: 'gpt-4o',
       ocrOnly: false,
       specialty: 'dentistry'
     });
 
-    if (!settings.apiKey) {
+    const providerSettings = resolveProviderSettings(settings);
+    if (!providerSettings.apiKey) {
       await safeSend({
         action: 'showResult',
-        error: '⚠️ Chưa cài đặt API Key!\n\nClick vào icon extension → Nhập API Key.'
+        error: `⚠️ Chưa cài đặt API Key ${providerSettings.provider === 'gemini' ? 'Gemini' : 'OpenAI'}!\n\nMở Cài đặt → Nhập API Key.`
       });
       return { error: 'No API key' };
     }
@@ -184,16 +151,14 @@ async function handleCaptureAndTranslate(message, tabId) {
       rect: rect
     });
 
-    // Use streaming
-    const result = await translateWithAIStreaming(
-      croppedBase64,
-      settings.apiKey,
-      settings.targetLang,
-      settings.model,
-      settings.ocrOnly,
-      tabId,
-      settings.specialty
-    );
+    const result = await streamTranslation({
+      ...providerSettings,
+      imageBase64: croppedBase64,
+      targetLang: settings.targetLang,
+      ocrOnly: settings.ocrOnly,
+      specialty: settings.specialty,
+      onChunk: (chunk, fullText) => safeSend({ action: 'streamChunk', chunk, fullText })
+    });
 
     // Final result
     await safeSend({
@@ -201,6 +166,7 @@ async function handleCaptureAndTranslate(message, tabId) {
       result: result.text,
       croppedImage: croppedBase64,
       model: result.model,
+      provider: result.provider,
       tokens: result.tokens,
       ocrOnly: settings.ocrOnly
     });
@@ -214,235 +180,6 @@ async function handleCaptureAndTranslate(message, tabId) {
     });
     return { error: err.message };
   }
-}
-
-// ============================================================
-// Streaming Translation
-// ============================================================
-async function translateWithAIStreaming(imageBase64, apiKey, targetLang, model, ocrOnly, tabId, specialty) {
-  const langNames = {
-    'vi': 'Vietnamese', 'en': 'English', 'zh': 'Chinese',
-    'ja': 'Japanese', 'ko': 'Korean', 'fr': 'French',
-    'de': 'German', 'es': 'Spanish', 'th': 'Thai'
-  };
-
-  const targetLangName = langNames[targetLang] || 'Vietnamese';
-
-  // ============================================================
-  // Specialty-specific expert profiles
-  // ============================================================
-  const specialtyProfiles = {
-    'dentistry': {
-      title: 'Giáo sư đầu ngành Nha khoa (Dentistry)',
-      expertise: 'dental sciences, oral pathology, dental materials, restorative dentistry, dental anatomy, occlusion, and clinical dentistry',
-      context: 'dental textbooks, clinical guidelines, and peer-reviewed dental journals'
-    },
-    'orthodontics': {
-      title: 'Giáo sư đầu ngành Chỉnh nha (Orthodontics)',
-      expertise: 'orthodontic biomechanics, cephalometric analysis, malocclusion classification, fixed and removable appliances, clear aligner therapy, and craniofacial growth',
-      context: 'orthodontic textbooks such as Proffit, Nanda, and Burstone, clinical case reports, and orthodontic journals'
-    },
-    'implantology': {
-      title: 'Giáo sư đầu ngành Implant Nha khoa (Implantology)',
-      expertise: 'dental implant systems, osseointegration, bone grafting, sinus lift procedures, guided bone regeneration (GBR), immediate loading protocols, and peri-implant diseases',
-      context: 'implantology textbooks such as Misch, ITI Treatment Guide, and implant-related journals'
-    },
-    'endodontics': {
-      title: 'Giáo sư đầu ngành Nội nha (Endodontics)',
-      expertise: 'pulp biology, root canal anatomy, endodontic instrumentation, obturation techniques, endodontic retreatment, vital pulp therapy, and apical surgery',
-      context: 'endodontic textbooks such as Cohen\'s Pathways of the Pulp, Ingle\'s Endodontics, and endodontic journals'
-    },
-    'periodontics': {
-      title: 'Giáo sư đầu ngành Nha chu (Periodontics)',
-      expertise: 'periodontal disease classification, scaling and root planing, flap surgery, mucogingival surgery, regenerative periodontics, and periodontal-systemic medicine links',
-      context: 'periodontal textbooks such as Carranza, Lindhe, and periodontal journals'
-    },
-    'prosthodontics': {
-      title: 'Giáo sư đầu ngành Phục hình răng (Prosthodontics)',
-      expertise: 'fixed prosthodontics, removable partial dentures, complete dentures, maxillofacial prosthetics, CAD/CAM dentistry, dental ceramics, and occlusal rehabilitation',
-      context: 'prosthodontic textbooks such as Shillingburg, McCracken, and prosthodontic journals'
-    },
-    'oral-surgery': {
-      title: 'Giáo sư đầu ngành Phẫu thuật miệng (Oral & Maxillofacial Surgery)',
-      expertise: 'dentoalveolar surgery, orthognathic surgery, TMJ disorders, oral pathology, trauma surgery, and surgical management of odontogenic infections',
-      context: 'oral surgery textbooks such as Peterson, Hupp, and oral surgery journals'
-    },
-    'pediatric-dentistry': {
-      title: 'Giáo sư đầu ngành Nha khoa trẻ em (Pediatric Dentistry)',
-      expertise: 'pediatric dental behavior management, pulp therapy for primary teeth, space management, traumatic dental injuries in children, and preventive dentistry',
-      context: 'pediatric dentistry textbooks such as McDonald, Pinkham, and pediatric dental journals'
-    },
-    'medicine': {
-      title: 'Giáo sư đầu ngành Y khoa (Medicine)',
-      expertise: 'internal medicine, clinical pharmacology, pathophysiology, diagnostic medicine, and evidence-based medicine',
-      context: 'medical textbooks such as Harrison, Cecil, and peer-reviewed medical journals'
-    },
-    'pharmacy': {
-      title: 'Giáo sư đầu ngành Dược học (Pharmacy)',
-      expertise: 'pharmacology, pharmacokinetics, drug interactions, pharmaceutical chemistry, clinical pharmacy, and drug delivery systems',
-      context: 'pharmacy textbooks such as Goodman & Gilman, applied therapeutics, and pharmaceutical journals'
-    },
-    'general': {
-      title: 'Chuyên gia dịch thuật học thuật',
-      expertise: 'academic translation, technical writing, and cross-language scientific communication',
-      context: 'academic textbooks, research papers, and scholarly publications'
-    }
-  };
-
-  const profile = specialtyProfiles[specialty] || specialtyProfiles['dentistry'];
-
-  // ============================================================
-  // Build system message (expert persona)
-  // ============================================================
-  const systemMessage = `You are a ${profile.title} — one of the most respected and authoritative experts in ${profile.expertise}.
-
-You have 30+ years of clinical experience, have published extensively in top-tier journals, and have trained generations of practitioners. You regularly author and review ${profile.context}.
-
-YOUR ROLE: You are translating specialized academic/clinical material for fellow professionals and advanced students. Your translations must reflect the depth of understanding that only a true domain expert possesses.
-
-TRANSLATION PRINCIPLES:
-1. ACCURACY FIRST: Every concept, mechanism, classification, and clinical detail must be translated with absolute precision. Never simplify or omit nuanced information.
-2. TERMINOLOGY HANDLING:
-   - Use the standard accepted ${targetLangName} terminology used in ${targetLangName}-language academia and clinical practice.
-   - For universally-used English terms that have no widely-accepted ${targetLangName} equivalent, keep the English term as-is.
-   - Drug names: use INN (International Nonproprietary Names) consistently.
-3. READABILITY: Write in clear, professional ${targetLangName} academic prose. The translation should read naturally — as if originally written in ${targetLangName} by a professor, not machine-translated.
-4. STRUCTURE PRESERVATION: Maintain all headings, numbered lists, bullet points, paragraph breaks, and logical structure from the original.
-5. CONTEXTUAL INTELLIGENCE: When the source text is ambiguous, use your deep domain expertise to choose the most clinically/academically appropriate interpretation.
-
-STRICT RULES:
-- Output ONLY the translated text. Do NOT output in a bilingual format (no line-by-line original/translation).
-- Do NOT include the original English term in parentheses next to the translation.
-- Do NOT add introductions, commentary, summaries, or conversational text.
-- Do NOT say "Here is the translation" or anything similar.
-- Do NOT apologize or explain.
-- If you cannot read part of the image, translate what you can see and mark unclear parts with [...].`;
-
-  let userPrompt;
-  if (ocrOnly) {
-    userPrompt = `Extract ALL text from this image exactly as written. Preserve the original formatting, paragraph breaks, and structure. Output ONLY the extracted text, nothing else.`;
-  } else {
-    userPrompt = `Translate the content shown in this image into ${targetLangName}. Apply your full expertise as a ${profile.title} to ensure the translation is accurate, professional, and reads naturally for ${targetLangName}-speaking professionals.`;
-  }
-
-  const url = 'https://api.openai.com/v1/chat/completions';
-
-  const messages = ocrOnly
-    ? [{
-        role: 'user',
-        content: [
-          { type: 'text', text: userPrompt },
-          {
-            type: 'image_url',
-            image_url: {
-              url: `data:image/png;base64,${imageBase64}`,
-              detail: 'high'
-            }
-          }
-        ]
-      }]
-    : [
-        { role: 'system', content: systemMessage },
-        {
-          role: 'user',
-          content: [
-            { type: 'text', text: userPrompt },
-            {
-              type: 'image_url',
-              image_url: {
-                url: `data:image/png;base64,${imageBase64}`,
-                detail: 'high'
-              }
-            }
-          ]
-        }
-      ];
-
-  const body = {
-    model: model || 'gpt-4o',
-    messages: messages,
-    max_tokens: 4096,
-    temperature: 0.15,
-    stream: true,
-    stream_options: { include_usage: true }
-  };
-
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`
-    },
-    body: JSON.stringify(body)
-  });
-
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
-    throw new Error(err.error?.message || `OpenAI API error: ${response.status}`);
-  }
-
-  // Stream the response
-  const reader = response.body.getReader();
-  const decoder = new TextDecoder();
-  let fullText = '';
-  let buffer = '';
-  let usageData = null;
-  let responseModel = model;
-
-  const safeSend = async (msg) => {
-    try { await chrome.tabs.sendMessage(tabId, msg); } catch (e) {}
-    try { chrome.runtime.sendMessage(msg); } catch (e) {}
-  };
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split('\n');
-    buffer = lines.pop() || ''; // Keep incomplete line in buffer
-
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed || !trimmed.startsWith('data: ')) continue;
-
-      const data = trimmed.slice(6);
-      if (data === '[DONE]') continue;
-
-      try {
-        const parsed = JSON.parse(data);
-        responseModel = parsed.model || responseModel;
-
-        if (parsed.usage) {
-          usageData = parsed.usage;
-        }
-
-        const content = parsed.choices?.[0]?.delta?.content || '';
-        if (content) {
-          fullText += content;
-          // Stream to content script
-          await safeSend({
-            action: 'streamChunk',
-            chunk: content,
-            fullText: fullText
-          });
-        }
-      } catch (e) {
-        // Skip malformed JSON
-      }
-    }
-  }
-
-  return {
-    text: fullText || 'Không nhận được kết quả',
-    imageBase64,
-    model: responseModel,
-    tokens: usageData ? {
-      prompt: usageData.prompt_tokens,
-      completion: usageData.completion_tokens,
-      total: usageData.total_tokens
-    } : null
-  };
 }
 
 // ============================================================

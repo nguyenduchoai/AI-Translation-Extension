@@ -287,7 +287,7 @@
         <div class="feature-card">
           <span class="feat-icon">🤖</span>
           <div class="feat-title">Multi-Model</div>
-          <div class="feat-desc">GPT-4o, 4o-mini, 4.1</div>
+          <div class="feat-desc">OpenAI và Google Gemini</div>
         </div>
       </div>
     </div>
@@ -311,6 +311,7 @@
         <div class="step-number">1</div>
         <h2>📦 Cài Extension vào Chrome</h2>
         <ol>
+          <li>Tải ZIP tại <a href="https://github.com/nguyenduchoai/AI-Translation-Extension/releases/latest">Releases</a> và giải nén.</li>
           <li>Mở Chrome</li>
           <li>Gõ vào thanh địa chỉ:
             <div class="url-box" onclick="copyText('chrome://extensions/')">
@@ -320,7 +321,7 @@
           </li>
           <li>Bật <strong>Developer mode</strong> (góc trên bên phải)</li>
           <li>Click <strong>"Load unpacked"</strong></li>
-          <li>Chọn thư mục <strong>ai-translate-extension</strong></li>
+          <li>Chọn thư mục vừa giải nén, có file <strong>manifest.json</strong></li>
         </ol>
         <div class="highlight">
           <span class="icon">💡</span>
@@ -331,7 +332,8 @@
       <!-- Step 2 -->
       <div class="step">
         <div class="step-number">2</div>
-        <h2>🔑 Lấy API Key OpenAI</h2>
+        <h2>🔑 Lấy API Key</h2>
+        <p>Dùng Gemini: lấy key tại <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a>. Dùng OpenAI: làm theo các bước dưới.</p>
         <ol>
           <li>
             <strong>Truy cập:</strong>
@@ -346,7 +348,7 @@
         </ol>
         <div class="warning">
           <span class="icon">⚠️</span>
-          <span><strong>Bảo mật:</strong> API Key là riêng tư. Key được lưu cục bộ trong Chrome. Cần có credit trong tài khoản để sử dụng.</span>
+          <span><strong>Bảo mật:</strong> API Key là riêng tư. Key lưu trong Chrome Sync và có thể đồng bộ qua tài khoản Chrome. Quota/chi phí theo nhà cung cấp API.</span>
         </div>
       </div>
 
@@ -356,18 +358,17 @@
         <h2>⚙️ Cấu hình Extension</h2>
         <ol>
           <li>Click icon extension 🌐 trên toolbar</li>
-          <li><strong>Dán API Key</strong> vào ô "OpenAI API Key"</li>
+          <li>Mở ⚙️ → chọn <strong>Nhà cung cấp AI</strong> → dán API Key tương ứng.</li>
           <li>Click <strong>🧪 Test kết nối</strong> — kiểm tra key hoạt động <span class="new-badge">MỚI</span></li>
           <li>Chọn <strong>Model AI</strong>:
             <table>
-              <tr><th>Model</th><th>Ưu điểm</th><th>Giá</th></tr>
-              <tr><td>GPT-4o</td><td>Chất lượng tốt nhất</td><td>~$2.50/1M tokens</td></tr>
-              <tr><td>GPT-4o-mini</td><td>Nhanh, rẻ, đủ dùng</td><td>~$0.15/1M tokens</td></tr>
-              <tr><td>GPT-4.1</td><td>Model mới nhất</td><td>~$2.00/1M tokens</td></tr>
-              <tr><td>GPT-4.1-mini</td><td>Cân bằng giá/chất lượng</td><td>~$0.40/1M tokens</td></tr>
+              <tr><th>Nhà cung cấp</th><th>Model</th></tr>
+              <tr><td>OpenAI</td><td>gpt-4o, gpt-4o-mini</td></tr>
+              <tr><td>Gemini</td><td>gemini-3.8-flash, gemini-3.5-flash-lite</td></tr>
+              <tr><td>Model khác…</td><td>Nhập mã model hỗ trợ ảnh có trong tài khoản API</td></tr>
             </table>
           </li>
-          <li>Chọn ngôn ngữ dịch → Click <strong>💾 Lưu cài đặt</strong></li>
+          <li>Chọn ngôn ngữ và chuyên ngành <strong>Nha khoa</strong> (hoặc phân ngành) → Click <strong>💾 Lưu lại</strong>.</li>
         </ol>
         <div class="highlight">
           <span class="icon">💡</span>
@@ -383,7 +384,7 @@
         <p><strong>Cách 1: Phím tắt</strong></p>
         <ol>
           <li>Nhấn <kbd>Alt</kbd> + <kbd>Q</kbd></li>
-          <li>Màn hình tối đi, con trỏ thành dấu <strong>+</strong></li>
+          <li>Con trỏ thành dấu <strong>+</strong></li>
           <li><strong>Kéo chuột</strong> khoanh vùng text cần dịch</li>
           <li>Thả chuột → Text <strong>stream real-time</strong> trong panel bên phải ⚡</li>
         </ol>
@@ -455,7 +456,7 @@
     </div>
 
     <div class="footer">
-      <p>AI Screen Translator v2.0 • OpenAI GPT-4o / GPT-4.1</p>
+      <p>AI Screen Translator v2.4.0 • OpenAI / Google Gemini</p>
       <p style="margin-top:4px">Made with ❤️ for Vietnamese readers</p>
     </div>
   </div>

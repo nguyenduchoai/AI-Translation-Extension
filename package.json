@@ -1,0 +1,10 @@
+{
+  "name": "ai-screen-translator",
+  "version": "2.4.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "package": "python3 scripts/package-extension.py"
+  }
+}
