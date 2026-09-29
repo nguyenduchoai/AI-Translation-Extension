@@ -32,19 +32,26 @@ function Get-RunCount {
 function Invoke-Launcher([string]$Scenario, [bool]$ExpectSuccess = $true) {
     Write-Host "Testing: $Scenario"
     $launcher = Join-Path $fixtureRoot 'start-vieneu.bat'
-    # cmd /s strips the outer quotes, leaving the quoted BAT path intact.
-    $command = '""' + $launcher + '" --no-pause"'
-    # Windows PowerShell 5.1 wraps redirected native stderr in ErrorRecords;
-    # uv also uses stderr for normal progress. Judge this process by its exit code.
-    $previousErrorPreference = $ErrorActionPreference
+    # Pass one raw command line: Windows PowerShell 5.1 native argument quoting
+    # otherwise adds another quote layer around cmd's required outer quotes.
+    $arguments = '/d /s /c ""' + $launcher + '" --no-pause"'
+    $stdoutPath = Join-Path $fixtureRoot 'launcher-stdout.log'
+    $stderrPath = Join-Path $fixtureRoot 'launcher-stderr.log'
     try {
-        $ErrorActionPreference = 'Continue'
-        $output = & $env:ComSpec /d /s /c $command 2>&1
-        $exitCode = $LASTEXITCODE
+        $process = Start-Process -FilePath $env:ComSpec -ArgumentList $arguments `
+            -Wait -PassThru -NoNewWindow `
+            -RedirectStandardOutput $stdoutPath -RedirectStandardError $stderrPath
+        $exitCode = $process.ExitCode
+        foreach ($log in @($stdoutPath, $stderrPath)) {
+            if (Test-Path -LiteralPath $log) {
+                Get-Content -LiteralPath $log | ForEach-Object { Write-Host $_ }
+            }
+        }
     } finally {
-        $ErrorActionPreference = $previousErrorPreference
+        foreach ($log in @($stdoutPath, $stderrPath)) {
+            Remove-Item -LiteralPath $log -ErrorAction SilentlyContinue
+        }
     }
-    $output | ForEach-Object { Write-Host $_ }
     if ($ExpectSuccess) {
         Assert-True ($exitCode -eq 0) "$Scenario failed with exit code $exitCode."
     } else {
