@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "AI Screen Translator",
-  "version": "2.6.1",
-  "description": "Dịch trang web, chụp vùng/OCR với OpenAI hoặc Gemini. Prompt nha khoa và mẫu tùy chỉnh; đọc tiếng Việt bằng TTS.",
+  "version": "2.7.0",
+  "description": "Dịch trang web, ảnh/OCR và audio tab với Groq ASR, OpenAI hoặc Gemini. Prompt nha khoa, mẫu tùy chỉnh và đọc tiếng Việt.",
   "permissions": [
     "activeTab",
     "storage",

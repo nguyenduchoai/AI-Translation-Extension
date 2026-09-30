@@ -1,6 +1,7 @@
 import { setupSettings } from './settings.js';
 import { setupSpeechPanel } from './lib/speech-panel.js';
 import { setupPagePanel } from './lib/page-panel.js';
+import { setupAudioPanel } from './lib/audio-panel.js';
 
 let streamingEl = null;
 let speech = null;
@@ -12,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupButtons();
   setupPagePanel();
   speech = await setupSpeechPanel();
+  await setupAudioPanel({ speech });
 });
 
 // Listen for messages from background.js

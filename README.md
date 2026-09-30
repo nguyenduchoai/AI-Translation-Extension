@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-2.6.1-blueviolet?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/version-2.7.0-blueviolet?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/badge/manifest-v3-blue?style=for-the-badge" alt="Manifest V3">
   <img src="https://img.shields.io/badge/AI-OpenAI_+_Gemini-green?style=for-the-badge" alt="OpenAI">
   <img src="https://img.shields.io/badge/license-MIT-yellow?style=for-the-badge" alt="License">
@@ -18,10 +18,11 @@
 
 ---
 
-## ✨ Tính năng Nổi bật (v2.6.1)
+## ✨ Tính năng Nổi bật (v2.7.0)
 
 | Tính năng | Mô tả |
 |-----------|-------|
+| 🎧 **Dịch audio tab (thử nghiệm)** | Groq ASR online → OpenAI/Gemini dịch tiếng Việt → VieNeu/giọng trình duyệt; không chạy model ASR trên máy |
 | 🌐 **Dịch trang web** | Thay chữ ngay trên trang, giữ liên kết/định dạng; có tiến độ, Dừng và Bản gốc |
 | 🧩 **Mẫu prompt** | Chọn mẫu sát nghĩa, tự nhiên, học thuật hoặc tạo/sửa/xóa mẫu riêng; OCR có mẫu độc lập |
 | 🖥️ **Chrome Side Panel** | Dịch thuật theo cơ chế Split-screen nguyên bản trình duyệt, không làm vỡ giao diện web |
@@ -59,7 +60,7 @@ git clone https://github.com/nguyenduchoai/AI-Translation-Extension.git
 
 ### Cách 2: Bằng file ZIP
 
-1. Tải file `ai-translate-extension-v2.6.1.zip` từ [Releases](https://github.com/nguyenduchoai/AI-Translation-Extension/releases/latest)
+1. Tải file `ai-translate-extension-v2.7.0.zip` từ [Releases](https://github.com/nguyenduchoai/AI-Translation-Extension/releases/latest)
 2. Giải nén vào một thư mục
 3. Load unpacked thư mục đó tương tự Cách 1.
 
@@ -73,7 +74,7 @@ git clone https://github.com/nguyenduchoai/AI-Translation-Extension.git
 6. Chọn **Dịch thuật → Nha khoa** hoặc phân ngành phù hợp, ngôn ngữ đích **Tiếng Việt**.
 7. Click **🧪 Test Server**, rồi **💾 Lưu lại**. Test có gửi một yêu cầu nhỏ tới API; quota/chi phí theo tài khoản nhà cung cấp.
 
-API key và model của hai nhà cung cấp được lưu riêng. Bản nâng cấp giữ lại cài đặt OpenAI cũ. Cài đặt dùng `chrome.storage.sync` và có thể đồng bộ qua Chrome; lịch sử ảnh/bản dịch nằm trong `chrome.storage.local`. Khi chụp vùng, chỉ ảnh đã cắt được gửi tới AI. Khi bấm **Dịch trang**, phần chữ phù hợp đã tải của trang được gửi theo từng đợt. Mẫu prompt và bản nháp được lưu cục bộ. Xem [chính sách riêng tư v2.6.0](docs/privacy-policy-v2.6.0.md).
+API key và model của hai nhà cung cấp được lưu riêng. Bản nâng cấp giữ lại cài đặt OpenAI cũ. Cài đặt dùng `chrome.storage.sync` và có thể đồng bộ qua Chrome; lịch sử ảnh/bản dịch nằm trong `chrome.storage.local`. Khi chụp vùng, chỉ ảnh đã cắt được gửi tới AI. Khi bấm **Dịch trang**, phần chữ phù hợp đã tải của trang được gửi theo từng đợt. Mẫu prompt và bản nháp được lưu cục bộ. Xem [chính sách riêng tư v2.7.0](docs/privacy-policy-v2.7.0.md).
 
 ### Prompt nha khoa
 
@@ -116,9 +117,9 @@ Hoặc sử dụng chuột: **Chuột phải** trên trình duyệt → **🌐 C
 
 ### Đọc câu trả lời AI bằng tiếng Việt (v2.5.0)
 
-**Đã triển khai TTS**, chưa có thu âm/nhận dạng/dịch cuộc họp Meet hoặc Zoom. VieNeu tạo giọng trong Python trên máy; extension nhận PCM streaming và phát trong trình duyệt. Không quảng cáo model VieNeu chạy hoàn toàn trong browser.
+**Đã triển khai TTS**. Dịch audio tab thử nghiệm được mô tả bên dưới; không thu mic hoặc audio ứng dụng Zoom desktop. VieNeu tạo giọng trong Python trên máy; extension nhận PCM streaming và phát trong trình duyệt. Không quảng cáo model VieNeu chạy hoàn toàn trong browser.
 
-1. Tải thêm **`vieneu-local-v2.6.1.zip`** trong [Releases](https://github.com/nguyenduchoai/AI-Translation-Extension/releases/latest), giải nén toàn bộ và mở **`companion/start-vieneu.bat`** trên Windows hoặc **`companion/start-vieneu.command`** trên macOS. Windows tự chuẩn bị Python/thư viện qua uv (cài bằng WinGet nếu thiếu); Mac cần Python 3.12 hoặc `uv`. Xem [hướng dẫn VieNeu local](companion/README.md). Lần đầu tải khoảng 580 MiB model, ngoài các thư viện Python.
+1. Tải thêm **`vieneu-local-v2.7.0.zip`** trong [Releases](https://github.com/nguyenduchoai/AI-Translation-Extension/releases/latest), giải nén toàn bộ và mở **`companion/start-vieneu.bat`** trên Windows hoặc **`companion/start-vieneu.command`** trên macOS. Windows tự chuẩn bị Python/thư viện qua uv (cài bằng WinGet nếu thiếu); Mac cần Python 3.12 hoặc `uv`. Xem [hướng dẫn VieNeu local](companion/README.md). Lần đầu tải khoảng 580 MiB model, ngoài các thư viện Python.
 2. Đợi ứng dụng VieNeu báo sẵn sàng. Trong extension, mở **🔊 Đọc tiếng Việt → VieNeu local → Kết nối**.
 3. Chọn giọng và **Nghe thử**. Có thể dán bất kỳ câu trả lời AI bằng tiếng Việt vào ô văn bản rồi bấm **Đọc nội dung**, không cần API key dịch.
 4. Bật **Tự đọc từng câu khi AI dịch** rồi chụp/dịch ảnh như trước. Câu hoàn chỉnh được gửi tới VieNeu ngay khi AI trả chữ, không đợi hết bài.
@@ -129,6 +130,19 @@ Tự đọc áp dụng cho bản dịch đích tiếng Việt; OCR và ngôn ng�
 **Giọng trình duyệt** là lựa chọn không cần VieNeu local nếu máy đã có giọng `vi-VN`; danh sách phụ thuộc hệ điều hành/browser. Đã thử giọng Linh trên máy Mac này. Đây không phải VieNeu và không phải edge-tts. Extension không tự đổi nhà cung cấp giọng khi xảy ra lỗi.
 
 Số đo **Âm thanh đầu** trong panel tính từ lúc gửi một câu đến lúc sẵn sàng phát đoạn âm thanh đầu, không bao gồm thời gian AI dịch và không phải phép đo âm thanh vật lý ở loa. Tốc độ phụ thuộc giọng, văn bản, máy và trạng thái model. Chưa có suy luận VieNeu hoàn toàn trong browser.
+
+### Dịch audio YouTube / Meet / Zoom trên trình duyệt (v2.7.0, thử nghiệm)
+
+1. Trong **⚙️**, lưu key OpenAI/Gemini, model, chuyên ngành và mẫu dịch. Audio luôn được dịch sang **tiếng Việt**, độc lập ngôn ngữ đích của dịch ảnh/trang.
+2. Mở **🎧 Dịch âm thanh tab**, nhập key riêng từ [Groq Console](https://console.groq.com/keys). **Lưu key trên máy** là tùy chọn; key Groq dùng `chrome.storage.local`, không Chrome Sync. Xóa ô key rồi Lưu để gỡ.
+3. Chọn ngôn ngữ gốc (hoặc tự nhận diện). Muốn nghe: chọn/kết nối giọng trong **🔊 Đọc tiếng Việt** trước, giữ chọn **Đọc bản dịch**. Bỏ chọn để chỉ xem chữ, không cần VieNeu.
+4. Bấm **Bắt đầu**, chọn **Tab Chrome** đang phát video và bật **Chia sẻ âm thanh tab**. Chỉ chấp nhận tab có audio; không chọn cửa sổ/toàn màn hình. Chrome cần giữ track video để duy trì chia sẻ nhưng extension không đọc, chụp hoặc gửi video trong luồng này.
+5. Giữ panel mở. Audio được chia thành WAV mono độc lập khoảng **10 giây**, gửi tới Groq `whisper-large-v3-turbo`; chữ gửi tới AI đã chọn rồi đọc tuần tự. Video gốc tiếp tục phát; âm thanh dịch phát trong panel, không trộn vào nguồn tab. Giảm âm lượng trong trình phát nếu cần (tắt tiếng nguồn có thể làm mất audio thu).
+6. **Dừng**, nút ngừng chia sẻ của Chrome hoặc đóng panel sẽ ngắt thu, yêu cầu và phát tiếng. Phần cuối chưa đủ 10 giây bị bỏ khi dừng. 30 đoạn gần nhất chỉ giữ trong bộ nhớ panel, không ghi lịch sử hay lưu audio.
+
+Có độ trễ gom đoạn + ASR + dịch + TTS; đây chưa phải phiên dịch đồng thời hoặc tự đồng bộ video. Cắt đoạn cố định có thể cắt giữa từ/câu; tiếng ồn/nhạc có thể gây nhận dạng sai. Chỉ bỏ gần-im-lặng, chưa có nhận diện người nói/VAD nâng cao. ASR/dịch và phát giọng chạy chồng lấp; mỗi hàng đợi tối đa 3 đoạn tính cả đoạn đang xử lý, giọng đọc giới hạn thêm 2.400 ký tự; nếu xử lý chậm hơn nguồn sẽ báo lỗi và dừng, không tự bỏ đoạn để chạy tiếp. Lỗi key, quota, mạng hoặc giọng đọc cũng dừng phiên; không tự đổi provider hoặc tự trả phí.
+
+Groq có Free Plan nhưng hạn mức thay đổi theo tài khoản; AI dịch có chi phí/hạn mức riêng. Xem [giới hạn Groq](https://console.groq.com/docs/rate-limits). Chỉ audio tab được gửi tới Groq, không thu microphone; dùng nội dung được phép chia sẻ. Chưa xác nhận chất lượng/độ trễ dịch thật với Groq trên máy người dùng. Kiểm tra luồng API dùng audio/phản hồi mô phỏng. Thu tab bằng getDisplayMedia thật đã kiểm tra trong side panel Chrome 153 trên macOS: WAV 10 giây, tách tiếng phát của extension khỏi nguồn, dừng cả track audio/video. Native capture trên Windows và dịch Groq thật vẫn cần thử với máy/key của người dùng.
 
 ### Phím tắt mặc định
 
@@ -160,14 +174,19 @@ Yêu cầu Node.js 20+ và Python 3; không cần cài thư viện ngoài.
 npm test
 npm run package
 # Hoặc kiểm tra phiên bản tag trước khi phát hành:
-python3 scripts/package-extension.py --tag v2.6.1
+python3 scripts/package-extension.py --tag v2.7.0
 ```
 
-ZIP nằm tại `dist/ai-translate-extension-v2.6.1.zip`, có `manifest.json` ngay gốc. Giải nén rồi **Load unpacked**; Chrome không nạp trực tiếp file ZIP. Khi cập nhật bản cũ, thay nội dung trong đúng thư mục đã nạp rồi bấm **Reload** tại `chrome://extensions/` để giữ ID/cài đặt.
+ZIP nằm tại `dist/ai-translate-extension-v2.7.0.zip`, có `manifest.json` ngay gốc. Giải nén rồi **Load unpacked**; Chrome không nạp trực tiếp file ZIP. Khi cập nhật bản cũ, thay nội dung trong đúng thư mục đã nạp rồi bấm **Reload** tại `chrome://extensions/` để giữ ID/cài đặt.
 
 Workflow `.github/workflows/release.yml` chạy test, đóng ZIP chỉ gồm file runtime và đính kèm checksum vào Release khi push tag `v*`. Test tự động dùng phản hồi API mô phỏng; xác nhận dịch thật cần API key của nhà cung cấp.
 
 ## 📝 Changelog
+
+### v2.7.0 (2026-09-30)
+- Thêm dịch audio tab bằng Groq ASR online, dùng AI dịch/prompt hiện có và giọng VieNeu/browser.
+- Thu theo lựa chọn chia sẻ tab của Chrome; key Groq lưu local tùy chọn; giới hạn hàng đợi và hủy toàn bộ khi dừng.
+- ZIP mã nguồn thử nghiệm riêng; không thay đổi bản đã gửi Chrome Web Store.
 
 ### v2.6.1 (2026-09-29)
 - Thêm BAT khởi động VieNeu trên Windows: chuẩn bị Python 3.12, cài thư viện, giữ model/môi trường cho lần chạy sau và giữ cửa sổ thông báo lỗi.

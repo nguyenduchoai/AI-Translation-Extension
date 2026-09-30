@@ -194,6 +194,12 @@
     .ai-translator-speak-section { margin-left: auto; border: 0; border-radius: 5px; background: #28213b; color: white; cursor: pointer; padding: 4px 8px; }
     .ai-translator-speak-section + .ai-translator-copy-section { margin-left: 0; }
     button:disabled { opacity: 0.5; cursor: wait; }
+    #audio-status { font-size: 12px; color: #bba7f2; line-height: 1.5; margin-top: 8px; }
+    #audio-status[data-state="error"] { color: #ff9696; }
+    #audio-results { max-height: 180px; overflow-y: auto; }
+    .audio-result { border-top: 1px solid #29243e; margin-top: 8px; padding-top: 8px; font-size: 12px; }
+    .audio-result p { margin: 4px 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .audio-source { color: #aaa2ba; }
     [hidden] { display: none !important; }
   </style>
 </head>
@@ -224,6 +230,28 @@
     <div id="page-count"></div>
     <div id="page-status" role="status" aria-live="polite">Chọn mẫu prompt trong Cài đặt rồi bấm Dịch trang.</div>
   </section>
+
+  <details class="speech-panel" id="audio-panel">
+    <summary>🎧 Dịch âm thanh tab <span class="speech-badge" id="audio-badge">Groq · Thử nghiệm</span></summary>
+    <div class="speech-content">
+      <p class="speech-help">Audio tab được gửi tới Groq; chữ được gửi tới AI đã lưu trong ⚙️ để dịch sang tiếng Việt, dùng chuyên ngành và mẫu prompt đang chọn. Cần Internet; hạn mức/chi phí theo từng tài khoản.</p>
+      <label for="audio-groq-key" class="form-label">Groq API key</label>
+      <input id="audio-groq-key" class="form-input" type="password" autocomplete="off" spellcheck="false" placeholder="gsk_…">
+      <div class="speech-row"><button id="audio-save-key" class="test-btn">Lưu key trên máy</button><a class="speech-help" href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer">Lấy Groq key</a></div>
+      <p class="speech-help">Key chỉ lưu cục bộ khi bấm Lưu. Xóa nội dung rồi Lưu để gỡ key.</p>
+      <label for="audio-language" class="form-label">Ngôn ngữ audio gốc</label>
+      <select id="audio-language" class="form-select">
+        <option value="">Tự nhận diện</option><option value="en">Tiếng Anh</option><option value="vi">Tiếng Việt</option>
+        <option value="zh">Tiếng Trung</option><option value="ja">Tiếng Nhật</option><option value="ko">Tiếng Hàn</option>
+        <option value="fr">Tiếng Pháp</option><option value="de">Tiếng Đức</option><option value="es">Tiếng Tây Ban Nha</option><option value="th">Tiếng Thái</option>
+      </select>
+      <label class="speech-auto"><input id="audio-read" type="checkbox" checked> Đọc bản dịch bằng nguồn giọng bên dưới</label>
+      <p class="speech-help">Bấm Bắt đầu → chọn Tab Chrome đang phát video → bật Chia sẻ âm thanh tab. Không thu mic. Giữ panel mở; xử lý từng đoạn khoảng 10 giây, không đồng bộ tức thì. Bỏ chọn Đọc nếu chỉ cần phụ đề.</p>
+      <div class="speech-row"><button id="audio-start" class="save-btn">▶ Bắt đầu</button><button id="audio-stop" class="test-btn" disabled>■ Dừng</button></div>
+      <div id="audio-status" role="status" aria-live="polite">Chưa thu âm.</div>
+      <div id="audio-results" aria-label="Các đoạn nhận dạng và bản dịch"></div>
+    </div>
+  </details>
 
   <details class="speech-panel">
     <summary>🔊 Đọc tiếng Việt <span class="speech-badge">Thử nghiệm</span></summary>
